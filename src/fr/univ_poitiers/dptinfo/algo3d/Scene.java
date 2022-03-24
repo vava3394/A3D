@@ -18,16 +18,23 @@ public class Scene
      */
     static final float wallsize=3F;
     static final float lenght=7.F;
+    static final float sizePlayer = 1.6F;
+    
+    float speed = 0.001f;
     /**
      * An angle used to animate the viewer
      */
-    float anglex,angley,x=0,z=0,y=0,aux;
+    float anglex,angley,x=0,z=0,y=0,aux,angleRotationSphereAux;
     
     boolean OnOff = true;
 
     Room r;
     
     Sphere s;
+    
+    Cone c;
+    
+    Piedestal piedestal;
     
     LightingShaders shaders;
     
@@ -59,9 +66,13 @@ public class Scene
             r = new Room(gl,lenght,wallsize);
             
             //sphere
-            s = new Sphere(gl, 10, 10, 1);
+            s = new Sphere(gl, 100, 100, 1);
             
+            //Cone
+            c = new Cone(gl, 1,2, 10);
             
+            //piedestal
+            piedestal = new Piedestal(gl,0.8f,speed,this);//gl,taille du cube,vitesse de déplacement de l'objet mit en exposition, Scene
             
             shaders  =renderer.getShaders();
             shaders.setNormalizing(true);
@@ -88,24 +99,10 @@ public class Scene
     public void step()
     {
             aux+=0.01F;
+            angleRotationSphereAux+=0.01F;
     }
     
-    private void setMatrixZero(Matrix4 m){
-        m.loadIdentity();
-        m.rotate(anglex,-0.1F,0.F,0.0F);
-        m.rotate(angley,0.0F,-0.1F,0.0F);
-        m.translate(x,y-1.6F,z);
-    }
-   
-    private float[] vec4MultMatrix4(float []vec, float[] mat){
-        
-        return new float[]{
-            (vec[0]*mat[0]) + (vec[1]*mat[4]) + (vec[2]*mat[8]) + (vec[3]*mat[12]),
-            (vec[0]*mat[1]) + (vec[1]*mat[5]) + (vec[2]*mat[9]) + (vec[3]*mat[13]),
-            (vec[0]*mat[2]) + (vec[1]*mat[6]) + (vec[2]*mat[10]) + (vec[3]*mat[14]),
-            (vec[0]*mat[3]) + (vec[1]*mat[7]) + (vec[2]*mat[11]) + (vec[3]*mat[15]),
-        };
-    }
+    
 
     /**
      * Draw the current simulation state
@@ -137,26 +134,64 @@ public class Scene
         modelviewmatrix.rotate(angley,0.0F,-0.1F,0.0F);     
         
         float[] pos = {x,y,z,1};
-        shaders.setLightPosition(vec4MultMatrix4(pos, modelviewmatrix.getMatrix()));
+        shaders.setLightPosition(Outils.vec4MultMatrix4(pos, modelviewmatrix.getMatrix()));
         shaders.setLighting(OnOff);
         
-        setMatrixZero(modelviewmatrix);
-        
-        modelviewmatrix.scale(1, -1, 1);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
         shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-        r.drawMirroir(gl, shaders, texcelling, Texwall);
-        modelviewmatrix.translate(0, 1.6f, -4);
-        shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-        s.draw(gl, shaders, Texwall);
+        r.drawMirroir(gl, shaders, texfloor, Texwall);
 
         
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(3,0,-4),0.5f,s);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(3,0,-2),0.5f,s);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(3,0,0),0.5f,s);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(3,0,2),0.5f,s);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(3,0,4),0.5f,s);
         
-        setMatrixZero(modelviewmatrix);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(-3,0,-4),0.5f,s);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(-3,0,-2),0.5f,s);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(-3,0,0),0.5f,s);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(-3,0,2),0.5f,s);
+        Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(-3,0,4),0.5f,s);
+        
+        
+        
+         Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
         shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-        r.draw(gl, shaders, texfloor, texcelling, Texwall);
-        modelviewmatrix.translate(0, 1.6f, -4);
-        shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-        s.draw(gl, shaders, Texwall);
+        r.draw(gl, shaders, texcelling, texfloor, Texwall); 
+
+        
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(3,0,-4),0.5f,s);
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(3,0,-2),0.5f,s);
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(3,0,0),0.5f,s);
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(3,0,2),0.5f,s);
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(3,0,4),0.5f,s);
+        
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(-3,0,-4),0.5f,s);
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(-3,0,-2),0.5f,s);
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(-3,0,0),0.5f,s);
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(-3,0,2),0.5f,s);
+        Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+        piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(-3,0,4),0.5f,s);
 
         MainActivity.log("Rendering terminated.");
     }

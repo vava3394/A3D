@@ -34,7 +34,7 @@ public class Drawable {
             shaders.setMaterialColor(colors);
         }
         
-        if(textures != null){
+        if(texture != null){
             shaders.setIsTexture(true);
             
             gl.glActiveTexture(GL2.GL_TEXTURE0); // Activation de l’unité 0 (attention au paramètre)
