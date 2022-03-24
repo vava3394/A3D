@@ -1,0 +1,29 @@
+
+#JVM = java
+JVM = java # JVM configured to use my nvidia card
+
+JAVAC = javac
+DEBUG = -g
+CHECK = -Xlint:all -Xdiags:verbose
+
+BINDIR = bin
+SRCDIR = src
+LIBS=".;../../javalib/gluegen-rt.jar;../../javalib/jogl-all.jar"
+
+default:
+	@echo type "make compil" and then "make run"
+
+
+compil:
+	if not exist $(BINDIR) mkdir $(BINDIR)
+	cd $(SRCDIR) & $(JAVAC) -d ../$(BINDIR) -cp $(LIBS) $(DEBUG) $(CHECK) fr/univ_poitiers/dptinfo/algo3d/*.java
+	if exist res\* xcopy /s res\* $(BINDIR)
+
+
+
+run:
+	cd $(BINDIR) & $(JVM) -cp $(LIBS) fr.univ_poitiers.dptinfo.algo3d.MainActivity
+
+clean:
+	if exist $(BINDIR) rmdir /s /q $(BINDIR)
+
