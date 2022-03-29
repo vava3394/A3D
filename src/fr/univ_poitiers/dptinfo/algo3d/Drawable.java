@@ -14,16 +14,33 @@ import com.jogamp.opengl.util.texture.Texture;
  */
 public class Drawable {
     
-    VBO norm;
-    VBO textures;
-    VBO pos;
-    VBO triangles;
+    private VBO norm;
+    private VBO textures;
+    private VBO pos;
+    private VBO triangles;
+    
+    private int typePosNorm;
+    private int typeTriangle;
+    private int typeTexture;
     
     public Drawable(VBO norm,VBO textures,VBO pos,VBO triangles){
         this.norm = norm;
         this.textures = textures;
         this.pos = pos;
         this.triangles = triangles;
+        this.typePosNorm = GL2.GL_FLOAT;
+        this.typeTexture = GL2.GL_FLOAT;
+        this.typeTriangle = GL2.GL_UNSIGNED_SHORT;
+    }
+    
+    public Drawable(VBO norm,VBO textures,VBO pos,VBO triangles,int typePosNorm,int typeTexture,int typeTriangle){
+        this.norm = norm;
+        this.textures = textures;
+        this.pos = pos;
+        this.triangles = triangles;
+        this.typePosNorm = typePosNorm;
+        this.typeTexture = typeTexture;
+        this.typeTriangle = typeTriangle;
     }
     
     public void draw(GL2 gl,LightingShaders shaders,float[] colors,Texture texture){
@@ -44,20 +61,20 @@ public class Drawable {
             gl.glBindBuffer(GL2.GL_ARRAY_BUFFER,textures.getBuffer());
             // texcoordbuffer est le buffer de la carte graphique
             //contenant les coordonnées de texture des sommets
-            shaders.setTextureCoordsPointer(2, GL2.GL_FLOAT);
+            shaders.setTextureCoordsPointer(2, this.typeTexture);
             // aTexCoord est l’attribut des shaders dédié aux cooordonnées de texture des sommets
         }else{
             shaders.setIsTexture(false);
         }
           
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER,norm.getBuffer());
-        shaders.setNormalsPointer(3,GL2.GL_FLOAT);
+        shaders.setNormalsPointer(3,this.typePosNorm);
 
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER,pos.getBuffer());
-        shaders.setPositionsPointer(3,GL2.GL_FLOAT);
+        shaders.setPositionsPointer(3,this.typePosNorm);
 
         gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, triangles.getBuffer());
-        gl.glDrawElements(GL2.GL_TRIANGLES, triangles.getSize(),GL2.GL_UNSIGNED_SHORT, 0);
+        gl.glDrawElements(GL2.GL_TRIANGLES, triangles.getSize(),this.typeTriangle, 0);
         
         
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER,0); 

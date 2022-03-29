@@ -1,5 +1,7 @@
 precision mediump float;
 
+#define NR_POINT_LIGHTS 2
+
 uniform bool uLighting;
 uniform bool uNormalizing;
 uniform bool uIsTexture;
@@ -7,21 +9,26 @@ uniform bool uIsTexture;
 uniform sampler2D uTextureUnit;
 
 uniform mat3 uNormalMatrix;
-
-uniform vec3 uLightPos;
-
 uniform vec4 uAmbiantLight;
-uniform vec4 uLightColor;
 uniform vec4 uMaterialColor;
-uniform vec4 uMaterialSpecular;
-uniform vec4 uLightSpecular;
 uniform vec3 uViewPos;
 
-uniform float uConstantAttenuation;
-uniform float uLinearAttenuation;
-uniform float uQuadraticAttenuation;
+struct PointLight{
+    vec4 uLightColor;
+    vec4 uMaterialSpecular;
+    vec4 uLightSpecular;
+    float uConstantAttenuation;
+    float uLinearAttenuation;
+    float uQuadraticAttenuation;
+    float uMaterialShininess;
+    vec3 uLightPos;
+};
 
-uniform float uMaterialShininess;
+uniform int nbLight;
+
+uniform PointLight uPointLights [NR_POINT_LIGHTS];
+
+
 
 // Only color is interpolated
 varying vec2 vTexCoord;
@@ -32,6 +39,32 @@ varying vec4 vMaterialColor;
 varying vec4 vAmbiantLight;
 varying vec4 vLightColor;
 
+vec4 calcLight(PointLight light, vec3 normal, vec4 texture,vec3 fragPos, vec3 ViewDir, vec4 Ambiant){
+    //vecteur directeur lumière
+    vec3 lightdir=normalize(light.uLightPos - fragPos);
+
+
+    //speculaire
+    vec3 halfwayDir = normalize(lightdir+ViewDir);
+    vec4 specular = light.uLightSpecular * pow(max(dot(normal, halfwayDir),0.0),light.uMaterialShininess)* light.uMaterialSpecular;
+
+    //diffusion
+    float weight = max(dot(normal, lightdir),0.0);
+    vec4 diffuse = weight*light.uLightColor;
+
+    //attenuation via distance
+    float distance = length(light.uLightPos - fragPos);
+    float attenuation = 1.0/(light.uConstantAttenuation + light.uLinearAttenuation 
+                             * distance + light.uQuadraticAttenuation * (distance*distance));
+    Ambiant *= attenuation;
+    diffuse *= attenuation;
+    specular *= attenuation;
+
+    
+    vec4 result = (uMaterialColor*texture)*(Ambiant+diffuse)+ specular;
+    result.a=uMaterialColor.a;
+    return result;
+}
 
 void main(void) {
     vec4 texture = vec4(1, 1, 1, 1);
@@ -43,33 +76,20 @@ void main(void) {
         //normal
         vec3 normal = uNormalMatrix * vVertexNormal;
         if (uNormalizing) normal=normalize(normal);
-        
-        //vecteur directeur lumière & viewPersonnage
-        vec3 lightdir=normalize(uLightPos - vVertexPosition.xyz);
+
         vec3 ViewDir=normalize(uViewPos - vVertexPosition.xyz);
+        
+        vec4 result = vec4(0,0,0,0);
+        for(int i = 0; i < NR_POINT_LIGHTS; i++)
+            result += calcLight(uPointLights[i], normal, texture,vVertexPosition.xyz, ViewDir,uAmbiantLight);
+        
 
-        //speculaire
-        vec3 halfwayDir = normalize(lightdir+ViewDir);
-        vec4 specular = uLightSpecular * pow(max(dot(normal, halfwayDir),0.0),uMaterialShininess)* uMaterialSpecular;
+        gl_FragColor = result;
+        gl_FragColor.a = uMaterialColor.a;
 
-        //diffusion
-        float weight = max(dot(normal, lightdir),0.0);
-        vec4 diffuse = weight*uLightColor;
-
-        //attenuation via distance
-        float distance = length(uLightPos - vVertexPosition.xyz);
-        float attenuation = 1.0/(uConstantAttenuation + uLinearAttenuation 
-                                 * distance + uQuadraticAttenuation * (distance*distance));
-        uAmbiantLight *= attenuation;
-        diffuse *= attenuation;
-        specular *= attenuation;
-
-
-        gl_FragColor = (uMaterialColor*texture)*(uAmbiantLight+diffuse)+ specular;
-        gl_FragColor.a=uMaterialColor.a;
-    }
-    else{
+    }else{
         gl_FragColor = (uMaterialColor*texture);
         gl_FragColor.a=uMaterialColor.a;
     }
+
 }

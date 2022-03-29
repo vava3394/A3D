@@ -25,7 +25,7 @@ public abstract class LightingShaders extends BasicShaders
 	/**
 	 * GLSL uniform light position
 	 */
-	protected int uLightPosition;
+	//protected int uLightPosition;
 	/**
 	 * GLSL  ambient light color
 	 */
@@ -33,23 +33,23 @@ public abstract class LightingShaders extends BasicShaders
 	/**
 	 * GLSL uniform light color
 	 */
-	protected int uLightColor;
+	//protected int uLightColor;
 	/**
 	 * GLSL uniform specular light color
 	 */
-	protected int uLightSpecular;
+	//protected int uLightSpecular;
 	/**
 	 * GLSL uniform constant (non distance-dependant) attenuation of the light
 	 */
-	protected int uConstantAttenuation;
+	//protected int uConstantAttenuation;
 	/**
 	 * GLSL uniform linear attenuation with respect to the distance between light and lighted point
 	 */
-	protected int uLinearAttenuation;
+	//protected int uLinearAttenuation;
 	/**
 	 * GLSL uniform quadratic attenuation (see linear attenuation)
 	 */
-	protected int uQuadraticAttenuation;
+	//protected int uQuadraticAttenuation;
 	// =====================================
 	// Uniform variables for object material
 	// =====================================
@@ -64,11 +64,11 @@ public abstract class LightingShaders extends BasicShaders
 	/**
 	 * GLSL uniform material specular color
 	 */
-	protected int uMaterialSpecular;
+	//protected int uMaterialSpecular;
 	/**
 	 * GLSL uniform Shininess of the material (for specular component)
 	 */
-	protected int uMaterialShininess;
+	//protected int uMaterialShininess;
 	// ================================
 	// Attributes to manage GLES arrays
 	// ================================
@@ -86,17 +86,19 @@ public abstract class LightingShaders extends BasicShaders
         
         protected int uViewPos;
         
-        //pour la flashLight
+        //pour la flashLightshaders
         protected int uCutOff;
         protected int uOuterCutOff;
         
+        //struct definit dans les shaders
+        protected int uPointLights;
         
 	/**
 	 * Constructor. nothing to do, everything is done in the super class...
 	 */
 	public LightingShaders(final MyGLRenderer renderer)
 	{
-		super(renderer);
+            super(renderer);
 	}
 
 
@@ -106,44 +108,37 @@ public abstract class LightingShaders extends BasicShaders
 	@Override
 	public void findVariables()
 	{
-		super.findVariables();
-		// Variables for matrices
-		this.uNormalMatrix = gl.glGetUniformLocation(this.shaderprogram, "uNormalMatrix");
+            super.findVariables();
+            // Variables for matrices
+            this.uNormalMatrix = gl.glGetUniformLocation(this.shaderprogram, "uNormalMatrix");
 
-		// Variables for light source
-		this.uLighting = gl.glGetUniformLocation(this.shaderprogram, "uLighting");
-		this.uLightPosition = gl.glGetUniformLocation(this.shaderprogram, "uLightPos");
-		this.uAmbiantLight = gl.glGetUniformLocation(this.shaderprogram, "uAmbiantLight");
-		this.uLightColor = gl.glGetUniformLocation(this.shaderprogram, "uLightColor");
-		this.uLightSpecular = gl.glGetUniformLocation(this.shaderprogram, "uLightSpecular");
-		this.uConstantAttenuation = gl.glGetUniformLocation(this.shaderprogram, "uConstantAttenuation");
-		this.uLinearAttenuation = gl.glGetUniformLocation(this.shaderprogram, "uLinearAttenuation");
-		this.uQuadraticAttenuation = gl.glGetUniformLocation(this.shaderprogram, "uQuadraticAttenuation");
+            // Variables for light source
+            this.uLighting = gl.glGetUniformLocation(this.shaderprogram, "uLighting");
+            this.uAmbiantLight = gl.glGetUniformLocation(this.shaderprogram, "uAmbiantLight");
 
-		// Variables for material
-		this.uNormalizing = gl.glGetUniformLocation(this.shaderprogram, "uNormalizing");
-		this.uMaterialColor = gl.glGetUniformLocation(this.shaderprogram, "uMaterialColor");
-		this.uMaterialSpecular = gl.glGetUniformLocation(this.shaderprogram, "uMaterialSpecular");
-		this.uMaterialShininess = gl.glGetUniformLocation(this.shaderprogram, "uMaterialShininess");
 
-                //texture
-                this.uTextureUnit = gl.glGetUniformLocation(this.shaderprogram, "uTextureUnit");
-                this.uIsTexture = gl.glGetUniformLocation(this.shaderprogram, "uIsTexture");
-                
-                this.aTexCoord = gl.glGetAttribLocation(this.shaderprogram, "aTexCoord");
-                gl.glEnableVertexAttribArray(this.aTexCoord);
-                
-                this.uViewPos = gl.glGetUniformLocation(this.shaderprogram, "uViewPos");
-                
-                this.uCutOff = gl.glGetUniformLocation(this.shaderprogram, "uCutOff");
-                
-                this.uOuterCutOff = gl.glGetUniformLocation(this.shaderprogram, "uOuterCutOff");
-                
-		// vertex attributes
-		this.aVertexNormal = gl.glGetAttribLocation(this.shaderprogram, "aVertexNormal");
-		gl.glEnableVertexAttribArray(this.aVertexNormal);
-                
-                
+            // Variables for material
+            this.uNormalizing = gl.glGetUniformLocation(this.shaderprogram, "uNormalizing");
+            this.uMaterialColor = gl.glGetUniformLocation(this.shaderprogram, "uMaterialColor");
+
+            //texture
+            this.uTextureUnit = gl.glGetUniformLocation(this.shaderprogram, "uTextureUnit");
+            this.uIsTexture = gl.glGetUniformLocation(this.shaderprogram, "uIsTexture");
+
+            this.aTexCoord = gl.glGetAttribLocation(this.shaderprogram, "aTexCoord");
+            gl.glEnableVertexAttribArray(this.aTexCoord);
+
+            this.uViewPos = gl.glGetUniformLocation(this.shaderprogram, "uViewPos");
+
+            this.uCutOff = gl.glGetUniformLocation(this.shaderprogram, "uCutOff");
+
+            this.uOuterCutOff = gl.glGetUniformLocation(this.shaderprogram, "uOuterCutOff");
+
+            // vertex attributes
+            this.aVertexNormal = gl.glGetAttribLocation(this.shaderprogram, "aVertexNormal");
+            gl.glEnableVertexAttribArray(this.aVertexNormal);
+
+            
 	}
 
 	/**
@@ -156,15 +151,15 @@ public abstract class LightingShaders extends BasicShaders
 	 */
 	static void convertMVtoNM(final float[] a,float[] b)
 	{
-		float c=a[0],d=a[1],e=a[2],
-			g=a[4],f=a[5],h=a[6],
-			i=a[8],j=a[9],k=a[10],
-			l=k*f-h*j,o=-k*g+h*i,m=j*g-f*i,n=c*l+d*o+e*m;
-		if(n==0.) return;
-		n=1.f/n;
-		b[0]=l*n; b[3]=(-k*d+e*j)*n; b[6]=(h*d-e*f)*n;
-		b[1]=o*n; b[4]=(k*c-e*i)*n; b[7]=(-h*c+e*g)*n;
-		b[2]=m*n; b[5]=(-j*c+d*i)*n; b[8]=(f*c-d*g)*n;
+            float c=a[0],d=a[1],e=a[2],
+                    g=a[4],f=a[5],h=a[6],
+                    i=a[8],j=a[9],k=a[10],
+                    l=k*f-h*j,o=-k*g+h*i,m=j*g-f*i,n=c*l+d*o+e*m;
+            if(n==0.) return;
+            n=1.f/n;
+            b[0]=l*n; b[3]=(-k*d+e*j)*n; b[6]=(h*d-e*f)*n;
+            b[1]=o*n; b[4]=(k*c-e*i)*n; b[7]=(-h*c+e*g)*n;
+            b[2]=m*n; b[5]=(-j*c+d*i)*n; b[8]=(f*c-d*g)*n;
 	}
 
 	// ================
@@ -177,15 +172,15 @@ public abstract class LightingShaders extends BasicShaders
 	@Override
 	public void setModelViewMatrix(final float[] matrix)
 	{
-		float[] normal_matrix=new float[9];
+            float[] normal_matrix=new float[9];
 
-		// Set modelview matrix
-		super.setModelViewMatrix(matrix);
+            // Set modelview matrix
+            super.setModelViewMatrix(matrix);
 
-		// Set normal matrix according to the modelview matrix.
-		// Scaling and translation must not be applied, only rotations...
-		convertMVtoNM(matrix, normal_matrix);
-		gl.glUniformMatrix3fv(this.uNormalMatrix, 1, false, normal_matrix,0);
+            // Set normal matrix according to the modelview matrix.
+            // Scaling and translation must not be applied, only rotations...
+            convertMVtoNM(matrix, normal_matrix);
+            gl.glUniformMatrix3fv(this.uNormalMatrix, 1, false, normal_matrix,0);
 	}
 
 	// =====================
@@ -198,17 +193,10 @@ public abstract class LightingShaders extends BasicShaders
 	 */
 	public void setLighting(final boolean state)
 	{
-		gl.glUniform1i(this.uLighting,state?1:0);
+            gl.glUniform1i(this.uLighting,state?1:0);
 	}
 
-	/**
-	 * Set the light position
-	 * @param lightpos position of the light
-	 */
-	public void setLightPosition(final float[] lightpos)
-	{
-		gl.glUniform3fv(this.uLightPosition,1,lightpos,0);
-	}
+	
 
 	/**
 	 * Set the ambient light color
@@ -216,37 +204,10 @@ public abstract class LightingShaders extends BasicShaders
 	 */
 	public void setAmbiantLight(final float[] amblight)
 	{
-		gl.glUniform4fv(this.uAmbiantLight,1,amblight,0);
+            gl.glUniform4fv(this.uAmbiantLight,1,amblight,0);
 	}
 
-	/**
-	 * Set the (diffuse) light color
-	 * @param lightcolor color of the diffuse light component
-	 */
-	public void setLightColor(final float[] lightcolor)
-	{
-		gl.glUniform4fv(this.uLightColor,1,lightcolor,0);
-	}
-
-	/**
-	 * Set the specular light color
-	 * @param lightspec specular light component
-	 */
-	public void setLightSpecular(final float[] lightspec)
-	{
-		gl.glUniform4fv(this.uLightSpecular,1,lightspec,0);
-	}
-
-	/**
-	 * Set light attenuation parameters
-	 * @param constant,linear,quadratic constant, linear and quadratic light attenuation
-	 */
-	public void setLightAttenuation(final float constant,final float linear,final float quadratic)
-	{
-		gl.glUniform1f(this.uConstantAttenuation,constant);
-		gl.glUniform1f(this.uLinearAttenuation,linear);
-		gl.glUniform1f(this.uQuadraticAttenuation,quadratic);
-	}
+	
 
 	// ==================
 	// Material functions
@@ -258,7 +219,7 @@ public abstract class LightingShaders extends BasicShaders
 	 */
 	public void setNormalizing(final boolean state)
 	{
-		gl.glUniform1i(this.uNormalizing,state?1:0);
+            gl.glUniform1i(this.uNormalizing,state?1:0);
 	}
 
 	/**
@@ -267,26 +228,9 @@ public abstract class LightingShaders extends BasicShaders
 	 */
 	public void setMaterialColor(final float[] matcolor)
 	{
-		gl.glUniform4fv(this.uMaterialColor,1,matcolor,0);
+            gl.glUniform4fv(this.uMaterialColor,1,matcolor,0);
 	}
 
-	/**
-	 * Set object specular color
-	 * @param matspec specular color to set to the object
-	 */
-	public void setMaterialSpecular(final float[] matspec)
-	{
-		gl.glUniform4fv(this.uMaterialSpecular,1,matspec,0);
-	}
-
-	/**
-	 * Set the object shininess (for specular component)
-	 * @param shininess shininess of the object
-	 */
-	public void setMaterialShininess(final float shininess)
-	{
-		gl.glUniform1f(this.uMaterialShininess,shininess);
-	}
 
 	// ===================
 	// Attributes handling
@@ -320,15 +264,98 @@ public abstract class LightingShaders extends BasicShaders
         
         public void setViewPos(final float[] vectDir)
 	{
-		gl.glUniform3fv(this.uViewPos,1,vectDir,0);
+            gl.glUniform3fv(this.uViewPos,1,vectDir,0);
 	}
         
         public void setCutOffFlashLight(float cutOff){
-                gl.glUniform1f(this.uCutOff, cutOff);
+            gl.glUniform1f(this.uCutOff, cutOff);
         }
         
         public void setOuterCutOffFlashLight(float outerCutOff){
             gl.glUniform1f(this.uOuterCutOff, outerCutOff);
         }
         
+          
+        /**
+	 * Set object specular color
+	 * @param matspec specular color to set to the object
+	 */
+	public void setMaterialSpecular(final int numberLight,final float[] matspec)
+	{
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uMaterialSpecular"),1,matspec,0);
+	}
+
+	/**
+	 * Set the object shininess (for specular component)
+	 * @param shininess shininess of the object
+	 */
+	public void setMaterialShininess(final int numberLight,final float shininess)
+	{
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uMaterialShininess"),shininess);
+	}
+        
+        /**
+	 * Set the (diffuse) light color
+	 * @param lightcolor color of the diffuse light component
+	 */
+	public void setLightColor(final int numberLight,final float[] lightcolor)
+	{
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLightColor"),1,lightcolor,0);
+	}
+
+	/**
+	 * Set the specular light color
+	 * @param lightspec specular light component
+	 */
+	public void setLightSpecular(final int numberLight,final float[] lightspec)
+	{
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLightSpecular"),1,lightspec,0);
+	}
+
+	/**
+	 * Set light attenuation parameters
+	 * @param constant,linear,quadratic constant, linear and quadratic light attenuation
+	 */
+	public void setLightAttenuation(final int numberLight,final float constant,final float linear,final float quadratic)
+	{
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uConstantAttenuation"),constant);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLinearAttenuation"),linear);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uQuadraticAttenuation"),quadratic); 
+	}
+        /**
+	 * Set the light position
+	 * @param lightpos position of the light
+	 */
+	public void setLightPosition(final int numberLight,final float[] lightpos)
+	{
+            gl.glUniform3fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLightPos"),1,lightpos,0);
+	}
+        
+        public void setNumberLight(final int number){
+            gl.glUniform1i(gl.glGetUniformLocation(this.shaderprogram, "nbLight"), number);
+        }
+        
+        public void setLightNumber(
+                final int numberLight,
+                final float[] matspec,
+                final float shininess,
+                final float[] lightcolor,
+                final float[] lightspec,
+                final float constant,
+                final float linear,
+                final float quadratic,
+                final float[] lightpos)
+        {
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uMaterialSpecular"),1,matspec,0);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uMaterialShininess"),shininess);
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLightColor"),1,lightcolor,0);
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLightSpecular"),1,lightspec,0);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uConstantAttenuation"),constant);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLinearAttenuation"),linear);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uQuadraticAttenuation"),quadratic);    
+        }
+        
+        public void setDirectionLight(final int numberLight,float[] dir){
+            gl.glUniform3fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].rotation"),1,dir,0);
+        }
 }

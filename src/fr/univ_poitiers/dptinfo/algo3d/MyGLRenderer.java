@@ -29,7 +29,7 @@ public class MyGLRenderer implements GLEventListener
 	static public final float[] magenta={1.F,0.F,1.F,1.F};
 	static public final float[] cyan={0.F,1.F,1.F,1.F};
 	static public final float[] orange={1.F,0.5F,0.F,0.5F};
-        static public float[] randColor = {(float)(Math.random()),(float)(Math.random()),(float)(Math.random())};
+        static public float[] randColor = {(float)(Math.random()),(float)(Math.random()),(float)(Math.random()),0.5f};
         
         static public float[] disco(){
             return new float[]{(float)(Math.random()),(float)(Math.random()),(float)(Math.random())};

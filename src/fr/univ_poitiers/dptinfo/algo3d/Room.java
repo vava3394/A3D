@@ -244,17 +244,28 @@ public class Room {
         return new float[]{( u[1] * v[2] - u[2] * v[1]),( u[2] * v[0] - u[0] * v[2]),( u[0] * v[1] - u[1] * v[0])};
     }*/
    
-    public void draw (GL2 gl, LightingShaders shaders, float[] colorFloor, float[] colorCelling, float[] colorWall){
+    public void draw (GL2 gl, LightingShaders shaders, float[] colorFloor, float[] colorCelling, float[] colorWall, boolean isMirroirFloor){
+        if(isMirroirFloor){
+            gl.glEnable(GL2.GL_BLEND);
+            gl.glBlendFunc(GL2.GL_SRC_ALPHA,GL2.GL_ONE_MINUS_SRC_ALPHA);
+            colorFloor[3] = 0.5f;
+        }       
         this.drawableFloor.draw(gl, shaders, colorFloor,null);
+        gl.glDisable(GL2.GL_BLEND);
         this.drawableCelling.draw(gl, shaders, colorFloor,null);
         this.drawableWall.draw(gl, shaders, colorFloor,null);
     }
     
-    public void draw (GL2 gl, LightingShaders shaders, Texture textureFloor, Texture textureCelling, Texture textureWall){
-        gl.glEnable(GL2.GL_BLEND);
-        gl.glBlendFunc(GL2.GL_SRC_ALPHA,GL2.GL_ONE_MINUS_SRC_ALPHA);
-        this.drawableFloor.draw(gl, shaders, new float[]{1,1,1,0.5f},textureFloor);
+    public void draw (GL2 gl, LightingShaders shaders, Texture textureFloor, Texture textureCelling, Texture textureWall,boolean isMirroirFloor){
+        float[] colorFloor = new float[]{1,1,1,1};
+        if(isMirroirFloor){
+            gl.glEnable(GL2.GL_BLEND);
+            gl.glBlendFunc(GL2.GL_SRC_ALPHA,GL2.GL_ONE_MINUS_SRC_ALPHA);
+            colorFloor[3] = 0.5f;
+        } 
+        this.drawableFloor.draw(gl, shaders, colorFloor,textureFloor);
         gl.glDisable(GL2.GL_BLEND);
+        
         this.drawableCelling.draw(gl, shaders, null,textureCelling);
         this.drawableWall.draw(gl, shaders, null,textureWall);
     }

@@ -23,18 +23,60 @@ public class Outils {
         };
     }
     
-    public static float[] calculNormal(float[]a,float[] b,float[] c){
-        float[] v = new float[]{b[0]-a[0],b[1]-a[1],b[2]-a[2]};
-        float[] u = new float[]{c[0]-a[0],c[1]-a[1],c[2]-a[2]};
-        float[] Vnorm = new float[]{
-            u[1]*v[2]-u[2]*v[1],
-            u[2]*v[0]-u[0]*v[2],
-            u[0]*v[1]-u[1]*v[0]
-        };
+    public static float[] calculNormal(float[] vertexpos, short[] triangles){
+        float[] normals = new float[vertexpos.length];
+
+        for (int i = 0; i < triangles.length; i += 3) {
+            Vec3f A = new Vec3f(vertexpos[3 * triangles[i]], vertexpos[3 * triangles[i] + 1], vertexpos[3 * triangles[i] + 2]);
+            Vec3f B = new Vec3f(vertexpos[3 * triangles[i + 1]], vertexpos[3 * triangles[i + 1] + 1], vertexpos[3 * triangles[i + 1] + 2]);
+            Vec3f C = new Vec3f(vertexpos[3 * triangles[i + 2]], vertexpos[3 * triangles[i + 2] + 1], vertexpos[3 * triangles[i + 2] + 2]);
+
+            Vec3f X = new Vec3f();
+            Vec3f Y = new Vec3f();
+
+            X.setSub(B, A);
+            Y.setSub(C, A);
+
+            Vec3f vec3f = new Vec3f();
+            vec3f.setCrossProduct(X, Y);
+            vec3f.normalize();
+
+            for (int j = 0; j < 3; j++) {
+                normals[3 * triangles[i + j]] = vec3f.x;
+                normals[3 * triangles[i + j] + 1] = vec3f.y;
+                normals[3 * triangles[i + j] + 2] = vec3f.z;
+            }
+        }
         
-        float norm = (float) Math.sqrt(Vnorm[0]*Vnorm[0]+Vnorm[1]*Vnorm[1]+Vnorm[2]*Vnorm[2]);
+        return normals;
+    }
+    
+    public static double[] calculNormal(double[] vertexpos, int[] triangles){
+        double[] normals = new double[vertexpos.length];
+
+        for (int i = 0; i < triangles.length; i += 3) {
+            Vec3d A = new Vec3d(vertexpos[3 * triangles[i]], vertexpos[3 * triangles[i] + 1], vertexpos[3 * triangles[i] + 2]);
+            Vec3d B = new Vec3d(vertexpos[3 * triangles[i + 1]], vertexpos[3 * triangles[i + 1] + 1], vertexpos[3 * triangles[i + 1] + 2]);
+            Vec3d C = new Vec3d(vertexpos[3 * triangles[i + 2]], vertexpos[3 * triangles[i + 2] + 1], vertexpos[3 * triangles[i + 2] + 2]);
+
+            Vec3d X = new Vec3d();
+            Vec3d Y = new Vec3d();
+
+            X.setSub(B, A);
+            Y.setSub(C, A);
+
+            Vec3d vec3d = new Vec3d();
+            vec3d.setCrossProduct(X, Y);
+            vec3d.normalize();
+
+            for (int j = 0; j < 3; j++) {
+                normals[3 * triangles[i + j]] = vec3d.x;
+                normals[3 * triangles[i + j] + 1] = vec3d.y;
+                normals[3 * triangles[i + j] + 2] = vec3d.z;
+            }
+        }
         
-        return new float[]{Vnorm[0]/norm,Vnorm[1]/norm,Vnorm[2]/norm};
+        return normals;
     }
     
     public static void setMatrixZero(Matrix4 m,float anglex,float angley,float x,float y,float z){

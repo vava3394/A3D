@@ -79,5 +79,20 @@ public class VBO {
         buffer, GL2.GL_STATIC_DRAW);
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
     }
+    
+    public void allocateBuffer(int[] tab,int size){
+        this.size = size;
+        ByteBuffer bytebuf = ByteBuffer.allocateDirect(tab.length * Integer.BYTES);
+        bytebuf.order(ByteOrder.nativeOrder()); // LITTLE_ENDIAN ou BIG_ENDIAN ?
+        IntBuffer buffer = bytebuf.asIntBuffer();
+        buffer.put(tab);
+        
+        buffer.position(0); // Retour à la position 0 pour l’exploitation ultérieure du buffer
+    
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, glbuffer); // Activation du buffer alloué
+        gl.glBufferData(GL2.GL_ARRAY_BUFFER, tab.length * Integer.BYTES,
+        buffer, GL2.GL_STATIC_DRAW);
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
+    }
 }
 

@@ -21,13 +21,13 @@ public class Cube{
         gl.glGenBuffers(4, buffers, 0); // Allocation du buffer
         
         float[] vertexpos = new float[]{
-            //haut
+            //bas
             lenght/2,0,lenght/2,
             lenght/2,0,-lenght/2,
             -lenght/2,0,lenght/2,
             -lenght/2,0,-lenght/2,
 
-            //bas
+            //haut
             lenght/2,lenght,lenght/2,
             lenght/2,lenght,-lenght/2,
             -lenght/2,lenght,lenght/2,
@@ -35,15 +35,15 @@ public class Cube{
             
             //droite
             lenght/2,0,lenght/2,
-            lenght/2,0,-lenght/2,
-            lenght/2,lenght,-lenght/2,
+            lenght/2,0,-lenght/2, 
             lenght/2,lenght,lenght/2,
+            lenght/2,lenght,-lenght/2,
             
             //gauche
             -lenght/2,0,lenght/2,
             -lenght/2,0,-lenght/2,
-            -lenght/2,lenght,-lenght/2,
             -lenght/2,lenght,lenght/2,
+            -lenght/2,lenght,-lenght/2,
 
             //devant
             lenght/2,0,-lenght/2,
@@ -59,56 +59,26 @@ public class Cube{
         };
 
         short[] triangles = new short[]{
-            0,2,1,
-            3,1,2,
+            1,2,0,
+            2,1,3,
             
-            4,5,6,
-            7,6,5,
+            5,6,4,
+            6,5,7,
             
-            0,4,2,
-            2,4,6,
+            9,10,8,
+            10,9,11,
             
-            2,6,3,
-            3,6,7,
+            12,14,13,
+            15,13,14,
             
-            3,7,1,
-            1,7,5,
+            17,18,16,
+            18,17,19,
             
-            1,5,0,
-            0,5,4
+            20,22,21,
+            23,21,22
         };
         
-        float[] norm = new float[]{
-            0,-1,0,
-            0,-1,0,
-            0,-1,0,
-            0,-1,0,
-            
-            0,1,0,
-            0,1,0,
-            0,1,0,
-            0,1,0,
- 
-            -1,0,0,
-            -1,0,0,
-            -1,0,0,
-            -1,0,0,
-            
-            1,0,0,
-            1,0,0,
-            1,0,0,
-            1,0,0,
-            
-            0,0,1,
-            0,0,1,
-            0,0,1,
-            0,0,1,
-            
-            0,0,-1,
-            0,0,-1,
-            0,0,-1,
-            0,0,-1,
-        };
+        float[] norm = Outils.calculNormal(vertexpos, triangles);
         
         float[] texture = new float[]{
             0,0,
