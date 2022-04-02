@@ -59,7 +59,7 @@ public class Scene
             gl.glEnable(GL2.GL_DEPTH_TEST);
             
             Texwall = renderer.loadTexture(gl, "wall.jpg");
-            texbasketball = renderer.loadTexture(gl, "basketball.jpg");
+            texbasketball = renderer.loadTexture(gl, "caco_EM.jpg");
             texfloor = renderer.loadTexture(gl, "ceiling.jpg");
             texcelling = renderer.loadTexture(gl, "tiles2.jpg");
             
@@ -67,13 +67,14 @@ public class Scene
             r = new Room(gl,lenght,wallsize);
             
             //sphere
-            s = new Sphere(gl, 100, 100, 1);
+            s = new Sphere(gl,5);
 
             //Model
-            allModels[0] = new Model(gl,Model.nameModel.Lara_Croft,new Vec3f(posModel.x,sizePlayer-0.5f,posModel.z),1.5d);//gl,nom du model,position,scale(si le model est trop grand ou trop petit)
+            //allModels[4] = new Model(gl,Model.nameModel.Lara_Croft,new Vec3f(posModel.x,sizePlayer-0.5f,posModel.z),1.5d);//gl,nom du model,position,scale(si le model est trop grand ou trop petit)
+            allModels[0] = new Model(gl,Model.nameModel.caco,new Vec3f(posModel.x,sizePlayer-0.5f,posModel.z),1d);
             //allModels[3] = new Model(gl, Model.nameModel.Armadillo,new Vec3f(posModel.x,0.1f,posModel.z), 50d);
-            allModels[2] = new Model(gl, Model.nameModel.dragon,new Vec3f(posModel.x,0.8f,posModel.z), 0.03d);
-            allModels[1] = new Model(gl, Model.nameModel.bateau,new Vec3f(posModel.x,0.8f,posModel.z));
+            //allModels[2] = new Model(gl, Model.nameModel.dragon,new Vec3f(posModel.x,0.8f,posModel.z), 0.03d);
+            //allModels[1] = new Model(gl, Model.nameModel.bateau,new Vec3f(posModel.x,0.8f,posModel.z));
             
             //piedestal
             piedestal = new Piedestal(gl,0.8f,speed,this);//gl,taille du cube,vitesse de déplacement de l'objet mit en exposition, Scene
@@ -81,6 +82,7 @@ public class Scene
             shaders  =renderer.getShaders();
             shaders.setNormalizing(true);
             shaders.setAmbiantLight(new float[]{.2f,.2f,.2f});
+            shaders.setViewPos(new float[]{0,0,0});
             
             creationShader(shaders);
             
@@ -143,7 +145,7 @@ public class Scene
 
             MainActivity.log("Starting rendering");
             
-            shaders.setViewPos(new float[]{x,y,z});
+            
             shaders.setMaterialColor(MyGLRenderer.white);
         
         /*******************Light*******************/
@@ -193,7 +195,12 @@ public class Scene
             
             Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
             shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-            allModels[indexModel].draw(gl, shaders, MyGLRenderer.gray,aux,this);
+            allModels[indexModel].draw(gl, shaders, texbasketball,aux,this);
+            
+            Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
+            modelviewmatrix.translate(0, 1.6f, 0);
+            shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
+            s.draw(gl, shaders, texbasketball);
             
             /***************Piedestal***************/
 
@@ -232,7 +239,7 @@ public class Scene
         
         Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
         shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-        allModels[indexModel].drawMirroir(gl, shaders, MyGLRenderer.gray,aux,this);
+        //allModels[indexModel].drawMirroir(gl, shaders, MyGLRenderer.gray,aux,this);
 
         piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,new Vec3f(3,0,-4),0.5f,s);
         piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,new Vec3f(3,0,-2),0.5f,s);

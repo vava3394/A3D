@@ -29,9 +29,12 @@ public class Loader{ //chargement d'un fichier .obj
         
         try{  
             //on utilise des arraylist car on connait pas d'avance le nombre de sommets et le nombre de triangles
-            ArrayList<Double> vertexposAux = new ArrayList<>();
-            ArrayList<Float> normalAux = new ArrayList<>();
-            ArrayList<Integer> trianglesAux = new ArrayList<>();
+            ArrayList<Double> vertexposStockage = new ArrayList<>();//stocke les position des sommets
+            ArrayList<Double> normalStockage= new ArrayList<>();//stocke les position des normales
+            ArrayList<Float> textureStockage = new ArrayList<>();//stocke les position des textures
+            ArrayList<Integer> trianglesStockage = new ArrayList<>();//stocke les sommets des triangles
+            ArrayList<Integer> normalPosInTriangle = new ArrayList<>();//stocke l'indices des normales
+            ArrayList<Integer> texturePosInTriangle = new ArrayList<>();//stocke l'indices des textures
             
             BufferedReader br = new BufferedReader(new InputStreamReader(Loader.class.getResourceAsStream("./model/" + nameFile)));   
             String line;
@@ -40,13 +43,33 @@ public class Loader{ //chargement d'un fichier .obj
                 String[] currentLine = line.split(" "); 
                 if(line.startsWith("v ")){//si on lit un 'v' cela signifie qu'on va lire les coordonnées d'un vertexpos
                     if(line.startsWith("v  ")){//cas si 'v' est suivi de 2 espaces flemme de changer toutes les lines
-                        vertexposAux.add(Double.parseDouble(currentLine[2])/scale);
-                        vertexposAux.add(Double.parseDouble(currentLine[3])/scale);
-                        vertexposAux.add(Double.parseDouble(currentLine[4])/scale);
+                        vertexposStockage.add(Double.parseDouble(currentLine[2])/scale);
+                        vertexposStockage.add(Double.parseDouble(currentLine[3])/scale);
+                        vertexposStockage.add(Double.parseDouble(currentLine[4])/scale);
                     }else{
-                        vertexposAux.add(Double.parseDouble(currentLine[1])/scale);
-                        vertexposAux.add(Double.parseDouble(currentLine[2])/scale);
-                        vertexposAux.add(Double.parseDouble(currentLine[3])/scale);
+                        vertexposStockage.add(Double.parseDouble(currentLine[1])/scale);
+                        vertexposStockage.add(Double.parseDouble(currentLine[2])/scale);
+                        vertexposStockage.add(Double.parseDouble(currentLine[3])/scale);
+                    }
+                }
+                else if(line.startsWith("vn ")){//si on lit un 'v' cela signifie qu'on va lire les coordonnées d'un vertexpos
+                    if(line.startsWith("vn  ")){//cas si 'v' est suivi de 2 espaces flemme de changer toutes les lines
+                        normalStockage.add(Double.parseDouble(currentLine[2]));
+                        normalStockage.add(Double.parseDouble(currentLine[3]));
+                        normalStockage.add(Double.parseDouble(currentLine[4]));
+                    }else{
+                        normalStockage.add(Double.parseDouble(currentLine[1]));
+                        normalStockage.add(Double.parseDouble(currentLine[2]));
+                        normalStockage.add(Double.parseDouble(currentLine[3]));
+                    }
+                }
+                else if(line.startsWith("vt ")){//si on lit un 'v' cela signifie qu'on va lire les coordonnées d'un vertexpos
+                    if(line.startsWith("vt  ")){//cas si 'v' est suivi de 2 espaces flemme de changer toutes les lines
+                        textureStockage.add(Float.parseFloat(currentLine[2]));
+                        textureStockage.add(Float.parseFloat(currentLine[3]));
+                    }else{
+                        textureStockage.add(Float.parseFloat(currentLine[1]));
+                        textureStockage.add(Float.parseFloat(currentLine[2]));
                     }
                 }
                 else if(line.startsWith("f ")){//si on lit un 'f' cela signifie qu'on va lire les coordonnées d'un triangle
@@ -56,47 +79,71 @@ public class Loader{ //chargement d'un fichier .obj
                             String[] sommet1 = currentLine[2].split("/");
                             String[] sommet2 = currentLine[3].split("/");
                             String[] sommet3 = currentLine[4].split("/");
-                            trianglesAux.add(Integer.parseInt(sommet1[0])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
-                            trianglesAux.add(Integer.parseInt(sommet2[0])-1);
-                            trianglesAux.add(Integer.parseInt(sommet3[0])-1);
+                            trianglesStockage.add(Integer.parseInt(sommet1[0])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
+                            trianglesStockage.add(Integer.parseInt(sommet2[0])-1);
+                            trianglesStockage.add(Integer.parseInt(sommet3[0])-1);
+                            normalPosInTriangle.add(Integer.parseInt(sommet1[2])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
+                            normalPosInTriangle.add(Integer.parseInt(sommet2[2])-1);
+                            normalPosInTriangle.add(Integer.parseInt(sommet3[2])-1);
+                            texturePosInTriangle.add(Integer.parseInt(sommet1[1])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
+                            texturePosInTriangle.add(Integer.parseInt(sommet2[1])-1);
+                            texturePosInTriangle.add(Integer.parseInt(sommet3[1])-1);
                         }else{
-                            trianglesAux.add(Integer.parseInt(currentLine[2])-1);
-                            trianglesAux.add(Integer.parseInt(currentLine[3])-1);
-                            trianglesAux.add(Integer.parseInt(currentLine[4])-1);
+                            trianglesStockage.add(Integer.parseInt(currentLine[2])-1);
+                            trianglesStockage.add(Integer.parseInt(currentLine[3])-1);
+                            trianglesStockage.add(Integer.parseInt(currentLine[4])-1);
                         }
                     }else{
                         if(line.contains("/")){
                             String[] sommet1 = currentLine[1].split("/");
                             String[] sommet2 = currentLine[2].split("/");
                             String[] sommet3 = currentLine[3].split("/");
-                            trianglesAux.add(Integer.parseInt(sommet1[0])-1);
-                            trianglesAux.add(Integer.parseInt(sommet2[0])-1);
-                            trianglesAux.add(Integer.parseInt(sommet3[0])-1);
+                            trianglesStockage.add(Integer.parseInt(sommet1[0])-1);
+                            trianglesStockage.add(Integer.parseInt(sommet2[0])-1);
+                            trianglesStockage.add(Integer.parseInt(sommet3[0])-1);
+                            normalPosInTriangle.add(Integer.parseInt(sommet1[2])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
+                            normalPosInTriangle.add(Integer.parseInt(sommet2[2])-1);
+                            normalPosInTriangle.add(Integer.parseInt(sommet3[2])-1);
+                            texturePosInTriangle.add(Integer.parseInt(sommet1[1])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
+                            texturePosInTriangle.add(Integer.parseInt(sommet2[1])-1);
+                            texturePosInTriangle.add(Integer.parseInt(sommet3[1])-1);
                         }else{
-                            trianglesAux.add(Integer.parseInt(currentLine[1])-1);
-                            trianglesAux.add(Integer.parseInt(currentLine[2])-1);
-                            trianglesAux.add(Integer.parseInt(currentLine[3])-1);
+                            trianglesStockage.add(Integer.parseInt(currentLine[1])-1);
+                            trianglesStockage.add(Integer.parseInt(currentLine[2])-1);
+                            trianglesStockage.add(Integer.parseInt(currentLine[3])-1);
                         }
                     }
                 }
             }
             
             //on convertie nos arrayList en un simple tableau
-            double[] vertexpos = new double[vertexposAux.size()];
+            double[] vertexpos = new double[vertexposStockage.size()];
             for (int i = 0; i < vertexpos.length; i++) {
-               vertexpos[i] = vertexposAux.get(i);
+               vertexpos[i] = vertexposStockage.get(i);
             }
 
-            int[] triangles = new int[trianglesAux.size()];
+            int[] triangles = new int[trianglesStockage.size()];
             for (int i = 0; i < triangles.length; i++) {
-               triangles[i] = trianglesAux.get(i);
+               triangles[i] = trianglesStockage.get(i);
             }
             
-            double[] norm = Outils.calculNormal(vertexpos, triangles);
+            double[] norm = new double[triangles.length*3];
+            for (int i = 0; i < triangles.length; i++) {
+                int pos = triangles[i]*3;
+                int posN = normalPosInTriangle.get(i)*3;
+                norm[pos]=normalStockage.get(posN);
+                norm[pos+1]=normalStockage.get(posN+1);
+                norm[pos+2]=normalStockage.get(posN+2);
+            }
             
-            
-            float[] texture = new float[vertexpos.length];
-           
+            float[] texture = new float[triangles.length*2];
+            for (int i = 0; i < triangles.length; i++) {
+                int pos = triangles[i]*2;
+                int posN = texturePosInTriangle.get(i)*2;
+                texture[pos]=textureStockage.get(posN);
+                texture[pos+1]=textureStockage.get(posN+1);
+            }
+
             glposbuffer.allocateBuffer(vertexpos, vertexpos.length);
             
             glelementtribuffer.allocateBuffer(triangles, triangles.length);

@@ -33,7 +33,6 @@ public class Sphere{
     private int offsetVertex = 0;
     private int offsetTriangle = 0;
     private short offsetPos = 0;
-    private int offsetTexture =0;
     
     public Sphere(final GL2 gl, float nbLongitude, float nbLatitude,float rayon){
         
@@ -143,8 +142,7 @@ public class Sphere{
             nbPoint+=i*Math.pow(3, i); // on ajoute (3 exposant subdivision) * subdivision
             nbTriangles*=4; // une face a maintenant 4 triangle en plus pour chaque triangle
         }
-        
-        
+   
         nbPoint*=8;//8 triangles pour un octaèdre
         nbPoint*=3;// 3 coordonnées pour un point
         
@@ -153,7 +151,6 @@ public class Sphere{
         
         vertexpos = new float[nbPoint];//creation tableau
         triangles = new short[nbTriangles];//creation tableau
-        texture = new float[(int) (2*(vertexpos.length/3))];
         
         float [][]s=new float [3][];
         
@@ -174,36 +171,44 @@ public class Sphere{
         s[2] = new float[] {1f,0,0};
         subdivision(s, sub);
         /************************************/
-        s[0] = new float[] {1f,0,0};
-        s[1] = new float[] {0,-1f,0};
+        s[0] = new float[] {0,-1f,0};
+        s[1] = new float[] {1f,0,0};
         s[2] = new float[] {0,0,1f};
         subdivision(s, sub);
-        s[0] = new float[] {0,0,1f};
-        s[1] = new float[] {0,-1f,0};
+        s[0] = new float[] {0,-1f,0};
+        s[1] = new float[] {0,0,1f};
         s[2] = new float[] {-1f,0,0};
         subdivision(s, sub);
-        s[0] = new float[] {-1f,0,0};
-        s[1] = new float[] {0,-1f,0};
+        s[0] = new float[] {0,-1f,0};
+        s[1] = new float[] {-1f,0,0};
         s[2] = new float[] {0,0,-1f};
         subdivision(s, sub);
-        s[0] = new float[] {0,0,-1f};
-        s[1] = new float[] {0,-1f,0};
+        s[0] = new float[] {0,-1f,0};
+        s[1] = new float[] {0,0,-1f};
         s[2] = new float[] {1f,0,0};
         subdivision(s, sub);
-
-        System.out.println(offsetPos);
         
-        int nbTriangle=nbTriangles;
         float[] norm = new float[vertexpos.length];
         norm = vertexpos;
         
-        
-        int texCursor = 0;
+        texture = new float[(vertexpos.length/3)*2];
+        for (int i = 0, n = -1; i < vertexpos.length; i += 3) {
+            float x = vertexpos[i];
+            float y = vertexpos[i + 1];
+            float z = vertexpos[i + 2];
+
+            double theta = (float) Math.asin(z);
+            double phi = (float) Math.atan2(y, x);
+
+            texture[++n] = (float) Math.abs(phi / (2 * Math.PI));
+            texture[++n] = (float) Math.abs(theta / Math.PI + 0.5);
+        }
+        /*int texCursor = 0;
         for (int i = 0; i < vertexpos.length; i+= 3) {
             texture[texCursor] = Math.abs(vertexpos[i+2]+1)/2;
             texture[texCursor+1] = Math.abs(vertexpos[i+1]+1)/2;
             texCursor += 2;
-        }
+        }*/
         
         
         this.glposbuffer = new VBO(gl, buffers[0]);
@@ -223,7 +228,7 @@ public class Sphere{
         this.drawable = new Drawable(glnormalbuffer, gltexturebuffer, glposbuffer, glelementtribuffer);
     }
     
-    private void setTriangleMillieu(float[][] s){
+    private void setTriangle(float[][] s){
         FloatBuffer f0 = FloatBuffer.wrap(s[0]);
         FloatBuffer f1 = FloatBuffer.wrap(s[1]);
         FloatBuffer f2 = FloatBuffer.wrap(s[2]);
@@ -232,15 +237,11 @@ public class Sphere{
             vertexpos[offsetVertex] = s[2][0];
             vertexpos[offsetVertex+1] = s[2][1];
             vertexpos[offsetVertex+2] = s[2][2];
-            texture[offsetTexture] = (float) Math.abs(Math.asin(s[2][2]));
-            texture[offsetTexture+1] = (float) Math.abs(Math.atan2(s[2][1], s[2][0]));
-            offsetTexture+=2;
             offsetVertex+=3;
             triangles[offsetTriangle]=(short)(offsetPos);
             this.auxilliaireSub.put(f2, offsetPos);
             offsetPos++;
         }else{
-            //System.out.println("deja existant 1er short = " + this.auxilliaireSub.get(f2));
             triangles[offsetTriangle]=this.auxilliaireSub.get(f2);
         }
 
@@ -248,31 +249,23 @@ public class Sphere{
             vertexpos[offsetVertex] = s[0][0];
             vertexpos[offsetVertex+1] = s[0][1];
             vertexpos[offsetVertex+2] = s[0][2];
-            texture[offsetTexture] = (float) Math.abs(Math.asin(s[0][2]));
-            texture[offsetTexture+1] = (float) Math.abs(Math.atan2(s[0][1], s[0][0]));
-            offsetTexture+=2;
             offsetVertex+=3;
             triangles[offsetTriangle+1]=(short)(offsetPos);
             this.auxilliaireSub.put(f0, offsetPos);
             offsetPos++;
         }else{
-            //System.out.println("deja existant 2eme short = " + this.auxilliaireSub.get(f0));
             triangles[offsetTriangle+1]=this.auxilliaireSub.get(f0);
         }
 
         if(!this.auxilliaireSub.containsKey(f1)){
             vertexpos[offsetVertex] = s[1][0];
             vertexpos[offsetVertex+1] = s[1][1];
-            vertexpos[offsetVertex+2] = s[1][2];
-            texture[offsetTexture] = (float) Math.abs(Math.asin(s[1][2]));
-            texture[offsetTexture+1] = (float) Math.abs(Math.atan2(s[1][1], s[1][0]));
-            offsetTexture+=2;
+            vertexpos[offsetVertex+2] = s[1][2]; 
             offsetVertex+=3;
             triangles[offsetTriangle+2]=(short)(offsetPos);
             this.auxilliaireSub.put(f1, offsetPos);
             offsetPos++;
         }else{
-            //System.out.println("deja existant 3eme short = " + this.auxilliaireSub.get(f1));
             triangles[offsetTriangle+2]=this.auxilliaireSub.get(f1);
         }
         offsetTriangle+=3;
@@ -315,8 +308,8 @@ public class Sphere{
             
             //définition du triangle du haut
             sAux[0] = s0;
-            sAux[1] = s1;
-            sAux[2] = s[1];
+            sAux[1] = s[1];
+            sAux[2] = s1;
             //on le subdivise
             subdivision(sAux, sub-1);
             
@@ -334,7 +327,7 @@ public class Sphere{
             //on le subdivise
             subdivision(sAux, sub-1);
         }else{
-            setTriangleMillieu(s);
+            setTriangle(s);
         }
     }
        
