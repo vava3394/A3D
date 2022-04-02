@@ -21,10 +21,6 @@ uniform PointLight uPointLights [NR_POINT_LIGHTS];
 // Only color is interpolated
 varying vec3 vVertexNormal;
 varying vec4 vVertexPosition;
-varying vec3 vLightPos;
-varying vec4 vMaterialColor;
-varying vec4 vAmbiantLight;
-varying vec4 vLightColor;
 varying vec2 vTexCoord;
 
 void main(void) {

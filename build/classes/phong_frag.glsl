@@ -24,20 +24,12 @@ struct PointLight{
     vec3 uLightPos;
 };
 
-uniform int nbLight;
-
 uniform PointLight uPointLights [NR_POINT_LIGHTS];
-
-
 
 // Only color is interpolated
 varying vec2 vTexCoord;
 varying vec3 vVertexNormal;
-varying vec3 vLightPos;
 varying vec4 vVertexPosition;
-varying vec4 vMaterialColor;
-varying vec4 vAmbiantLight;
-varying vec4 vLightColor;
 
 vec4 calcLight(PointLight light, vec3 normal, vec4 texture,vec3 fragPos, vec3 ViewDir, vec4 Ambiant){
     //vecteur directeur lumière

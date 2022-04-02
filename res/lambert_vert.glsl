@@ -1,7 +1,5 @@
 precision mediump float;
 
-uniform bool uIsMirror;
-
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 

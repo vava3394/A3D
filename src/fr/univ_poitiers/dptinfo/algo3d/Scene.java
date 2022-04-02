@@ -165,7 +165,7 @@ public class Scene
             shaders.setLighting(OnOffLight);
             shaders.setUseFlashLight(OnOffFlash);
 
-            //rotation rigolo
+            //rotation rigolo pour SpotLightShaders
             modelviewmatrix.rotate(angleRotationSphereAux,0.0F,-0.1F,0.0F);//rotation autour d'elle même    
             shaders.setDirectionLight(0,Outils.vec4MultMatrix4(new float[]{0,0,-1,1}, modelviewmatrix.getMatrix()));
             modelviewmatrix.rotate(angleRotationSphereAux*4,0.0F,0.1F,0.0F);//rotation autour d'elle même 

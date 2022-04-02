@@ -1,7 +1,5 @@
 #define NR_POINT_LIGHTS 1
 
-uniform bool uIsTexture;
-
 // Matrices
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;

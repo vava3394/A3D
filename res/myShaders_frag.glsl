@@ -41,13 +41,9 @@ uniform PointLight uPointLights [NR_POINT_LIGHTS];
 // Only color is interpolated
 varying vec2 vTexCoord;
 varying vec3 vVertexNormal;
-varying vec3 vLightPos;
 varying vec4 vVertexPosition;
-varying vec4 vMaterialColor;
-varying vec4 vAmbiantLight;
-varying vec4 vLightColor;
 
-Material calcLight(PointLight light, vec3 normal, vec4 texture,vec3 fragPos, vec3 ViewDir, vec4 Ambiant){
+Material calcLight(PointLight light, vec3 normal, vec4 texture,vec3 fragPos, vec3 ViewDir, vec4 ambiant){
     //vecteur directeur lumière
     vec3 lightdir=normalize(light.uLightPos - fragPos);
 
@@ -64,11 +60,11 @@ Material calcLight(PointLight light, vec3 normal, vec4 texture,vec3 fragPos, vec
     float distance = length(light.uLightPos - fragPos);
     float attenuation = 1.0/(light.uConstantAttenuation + light.uLinearAttenuation 
                              * distance + light.uQuadraticAttenuation * (distance*distance));
-    Ambiant *= attenuation;
+    ambiant *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
 
-    return new Material(Ambiant,diffuse,specular);
+    return new Material(ambiant,diffuse,specular);
 }
 
 void main(void) {
