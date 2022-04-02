@@ -1,6 +1,6 @@
 precision mediump float;
 
-#define NR_POINT_LIGHTS 2
+#define NR_POINT_LIGHTS 1
 
 uniform bool uLighting;
 uniform bool uNormalizing;
@@ -51,15 +51,6 @@ vec4 calcLight(PointLight light, vec3 normal, vec4 texture,vec3 fragPos, vec3 Vi
     //diffusion
     float weight = max(dot(normal, lightdir),0.0);
     vec4 diffuse = weight*light.uLightColor;
-
-    //attenuation via distance
-    float distance = length(light.uLightPos - fragPos);
-    float attenuation = 1.0/(light.uConstantAttenuation + light.uLinearAttenuation 
-                             * distance + light.uQuadraticAttenuation * (distance*distance));
-    Ambiant *= attenuation;
-    diffuse *= attenuation;
-    specular *= attenuation;
-
     
     vec4 result = (uMaterialColor*texture)*(Ambiant+diffuse)+ specular;
     result.a=uMaterialColor.a;

@@ -10,7 +10,7 @@ package fr.univ_poitiers.dptinfo.algo3d;
  * @author vava3
  */
 public class PhongShaders extends LightingShaders{
-    /**
+        /**
 	 * Constructor : compile shaders and group them in a GLES program,
 	 * and set the various GLSL variables
 	 * @param renderer

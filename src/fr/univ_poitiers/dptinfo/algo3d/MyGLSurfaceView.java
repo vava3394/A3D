@@ -152,7 +152,10 @@ public class MyGLSurfaceView extends JPanel
                             scene.angley=0;
                         break;
                         case 'l':
-                            this.scene.OnOff = !this.scene.OnOff;
+                            this.scene.OnOffLight = !this.scene.OnOffLight;
+                        break;
+                        case 'f':
+                            this.scene.OnOffFlash = !this.scene.OnOffFlash;
                         break;
                         case 'a':
                             scene.randomIndex();

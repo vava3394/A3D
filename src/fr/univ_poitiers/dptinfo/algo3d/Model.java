@@ -11,7 +11,7 @@ import com.jogamp.opengl.math.Matrix4;
 
 public class Model extends Loader{
 
-    public static enum nameModel {Lara_Croft,Armadillo,Doom,dragon,bateau,cube};//enum de tous les noms de fichiers .obj du projet 
+    public static enum nameModel {Lara_Croft,Armadillo,dragon,bateau,cube};//enum de tous les noms de fichiers .obj du projet 
 
     private Vec3f pos;
 

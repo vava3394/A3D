@@ -93,7 +93,7 @@ public class Loader{ //chargement d'un fichier .obj
             }
             
             double[] norm = Outils.calculNormal(vertexpos, triangles);
-
+            
             
             float[] texture = new float[vertexpos.length];
            

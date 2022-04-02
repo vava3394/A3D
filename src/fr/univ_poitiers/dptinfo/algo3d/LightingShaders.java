@@ -86,13 +86,12 @@ public abstract class LightingShaders extends BasicShaders
         
         protected int uViewPos;
         
-        //pour la flashLightshaders
+        //pour la flashLight dans phongShaders
         protected int uCutOff;
         protected int uOuterCutOff;
-        
-        //struct definit dans les shaders
-        protected int uPointLights;
-        
+        protected int uDirection;
+        protected int uUseFlashLight;
+                
 	/**
 	 * Constructor. nothing to do, everything is done in the super class...
 	 */
@@ -116,7 +115,6 @@ public abstract class LightingShaders extends BasicShaders
             this.uLighting = gl.glGetUniformLocation(this.shaderprogram, "uLighting");
             this.uAmbiantLight = gl.glGetUniformLocation(this.shaderprogram, "uAmbiantLight");
 
-
             // Variables for material
             this.uNormalizing = gl.glGetUniformLocation(this.shaderprogram, "uNormalizing");
             this.uMaterialColor = gl.glGetUniformLocation(this.shaderprogram, "uMaterialColor");
@@ -131,8 +129,9 @@ public abstract class LightingShaders extends BasicShaders
             this.uViewPos = gl.glGetUniformLocation(this.shaderprogram, "uViewPos");
 
             this.uCutOff = gl.glGetUniformLocation(this.shaderprogram, "uCutOff");
-
             this.uOuterCutOff = gl.glGetUniformLocation(this.shaderprogram, "uOuterCutOff");
+            this.uDirection = gl.glGetUniformLocation(this.shaderprogram, "uDirectionFlashLight");
+            this.uUseFlashLight = gl.glGetUniformLocation(this.shaderprogram, "uUseFlashLight");
 
             // vertex attributes
             this.aVertexNormal = gl.glGetAttribLocation(this.shaderprogram, "aVertexNormal");
@@ -196,8 +195,6 @@ public abstract class LightingShaders extends BasicShaders
             gl.glUniform1i(this.uLighting,state?1:0);
 	}
 
-	
-
 	/**
 	 * Set the ambient light color
 	 * @param amblight color of light
@@ -246,7 +243,11 @@ public abstract class LightingShaders extends BasicShaders
 	}
         
         
-        //texture
+        /**
+	 * Set texture array for future drawings
+	 * @param size number of coordinates by textures
+	 * @param dtype type of coordinates
+	 */
         public void setTextureCoordsPointer(int size,int dtype)
 	{
             gl.glVertexAttribPointer(this.aTexCoord, size, dtype, false, 0, 0);
@@ -257,27 +258,27 @@ public abstract class LightingShaders extends BasicShaders
             gl.glUniform1i(this.uTextureUnit, pos);
 	}
         
+        /**
+	 * Set use texture
+	 * @param state on/off
+	 */
         public void setIsTexture(boolean state)
 	{
             gl.glUniform1i(this.uIsTexture,state?1:0);
 	}
         
+        /**
+	 * Set position of viewer
+	 * @param vectDir vec3 position
+	 */
         public void setViewPos(final float[] vectDir)
 	{
             gl.glUniform3fv(this.uViewPos,1,vectDir,0);
 	}
-        
-        public void setCutOffFlashLight(float cutOff){
-            gl.glUniform1f(this.uCutOff, cutOff);
-        }
-        
-        public void setOuterCutOffFlashLight(float outerCutOff){
-            gl.glUniform1f(this.uOuterCutOff, outerCutOff);
-        }
-        
-          
+ 
         /**
 	 * Set object specular color
+         * @param numberLight light number has modifier
 	 * @param matspec specular color to set to the object
 	 */
 	public void setMaterialSpecular(final int numberLight,final float[] matspec)
@@ -287,6 +288,7 @@ public abstract class LightingShaders extends BasicShaders
 
 	/**
 	 * Set the object shininess (for specular component)
+         * @param numberLight light number has modifier
 	 * @param shininess shininess of the object
 	 */
 	public void setMaterialShininess(final int numberLight,final float shininess)
@@ -296,6 +298,7 @@ public abstract class LightingShaders extends BasicShaders
         
         /**
 	 * Set the (diffuse) light color
+         * @param numberLight light number has modifier
 	 * @param lightcolor color of the diffuse light component
 	 */
 	public void setLightColor(final int numberLight,final float[] lightcolor)
@@ -305,6 +308,7 @@ public abstract class LightingShaders extends BasicShaders
 
 	/**
 	 * Set the specular light color
+         * @param numberLight light number has modifier
 	 * @param lightspec specular light component
 	 */
 	public void setLightSpecular(final int numberLight,final float[] lightspec)
@@ -314,7 +318,10 @@ public abstract class LightingShaders extends BasicShaders
 
 	/**
 	 * Set light attenuation parameters
-	 * @param constant,linear,quadratic constant, linear and quadratic light attenuation
+         * @param numberLight light number has modifier
+	 * @param constant 
+         * @param linear
+         * @param quadratic constant, linear and quadratic light attenuation
 	 */
 	public void setLightAttenuation(final int numberLight,final float constant,final float linear,final float quadratic)
 	{
@@ -324,6 +331,7 @@ public abstract class LightingShaders extends BasicShaders
 	}
         /**
 	 * Set the light position
+         * @param numberLight light number has modifier
 	 * @param lightpos position of the light
 	 */
 	public void setLightPosition(final int numberLight,final float[] lightpos)
@@ -331,12 +339,16 @@ public abstract class LightingShaders extends BasicShaders
             gl.glUniform3fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLightPos"),1,lightpos,0);
 	}
         
-        public void setNumberLight(final int number){
-            gl.glUniform1i(gl.glGetUniformLocation(this.shaderprogram, "nbLight"), number);
+        /**
+	 * Set the light position
+         * @param numberLight light number has modifier
+	 * @param dir direction where the light spot is aiming for SpotLightShaders
+	 */
+        public void setDirectionLight(final int numberLight,float[] dir){
+            gl.glUniform3fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].rotation"),1,dir,0);
         }
         
-        public void setLightNumber(
-                final int numberLight,
+        public void setFlashLightMaterial(
                 final float[] matspec,
                 final float shininess,
                 final float[] lightcolor,
@@ -346,16 +358,30 @@ public abstract class LightingShaders extends BasicShaders
                 final float quadratic,
                 final float[] lightpos)
         {
-            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uMaterialSpecular"),1,matspec,0);
-            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uMaterialShininess"),shininess);
-            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLightColor"),1,lightcolor,0);
-            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLightSpecular"),1,lightspec,0);
-            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uConstantAttenuation"),constant);
-            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uLinearAttenuation"),linear);
-            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].uQuadraticAttenuation"),quadratic);    
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uFlashMaterial.uMaterialSpecular"),1,matspec,0);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uFlashMaterial.uMaterialShininess"),shininess);
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uFlashMaterial.uLightColor"),1,lightcolor,0);
+            gl.glUniform4fv(gl.glGetUniformLocation(this.shaderprogram, "uFlashMaterial.uLightSpecular"),1,lightspec,0);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uFlashMaterial.uConstantAttenuation"),constant);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uFlashMaterial.uLinearAttenuation"),linear);
+            gl.glUniform1f(gl.glGetUniformLocation(this.shaderprogram, "uFlashMaterial.uQuadraticAttenuation"),quadratic);
+            gl.glUniform3fv(gl.glGetUniformLocation(this.shaderprogram, "uFlashMaterial.uLightPos"),1,lightpos,0);
         }
         
-        public void setDirectionLight(final int numberLight,float[] dir){
-            gl.glUniform3fv(gl.glGetUniformLocation(this.shaderprogram, "uPointLights["+numberLight+"].rotation"),1,dir,0);
+        public void setCutOffFlashLight(final float cutOff){
+            gl.glUniform1f(this.uCutOff, cutOff);
         }
+        
+        public void setOuterCutOffFlashLight(final float outerCutOff){
+            gl.glUniform1f(this.uOuterCutOff, outerCutOff);
+        }
+        
+        public void setDirectionFlashLight(final float[] dir){
+            gl.glUniform3fv(this.uDirection,1,dir,0);
+        }
+        
+        public void setUseFlashLight(final boolean state)
+        {
+            gl.glUniform1i(this.uUseFlashLight,state?1:0);
+	} 
 }

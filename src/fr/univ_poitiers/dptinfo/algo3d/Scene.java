@@ -1,9 +1,7 @@
 package fr.univ_poitiers.dptinfo.algo3d;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.math.Matrix4;
-import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.util.texture.Texture;
 
 /**
@@ -29,14 +27,14 @@ public class Scene
      */
     float anglex,angley,x=0,z=0,y=0,aux,angleRotationSphereAux;
     
-    boolean OnOff = true;
+    boolean OnOffLight = true,OnOffFlash = false;
 
     Room r;
     
     Sphere s;
     
     
-    Model[] allModels = new Model[5];
+    Model[] allModels = new Model[4];
     
     Piedestal piedestal;
     
@@ -55,8 +53,7 @@ public class Scene
      * Init some OpenGL and shaders uniform data to render the simulation scene
      * @param renderer Renderer
      */
-    public void initGraphics(MyGLRenderer renderer)
-    {
+    public void initGraphics(MyGLRenderer renderer){
             GL2 gl=renderer.getGL();
             gl.glDepthFunc(GL2.GL_LESS);
             gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -71,12 +68,10 @@ public class Scene
             
             //sphere
             s = new Sphere(gl, 100, 100, 1);
-            
-            
+
             //Model
             allModels[0] = new Model(gl,Model.nameModel.Lara_Croft,new Vec3f(posModel.x,sizePlayer-0.5f,posModel.z),1.5d);//gl,nom du model,position,scale(si le model est trop grand ou trop petit)
-            allModels[4] = new Model(gl,Model.nameModel.Doom,new Vec3f(posModel.x,sizePlayer-0.5f,posModel.z),4000d);
-            allModels[3] = new Model(gl, Model.nameModel.Armadillo,new Vec3f(posModel.x,0.1f,posModel.z), 50d);
+            //allModels[3] = new Model(gl, Model.nameModel.Armadillo,new Vec3f(posModel.x,0.1f,posModel.z), 50d);
             allModels[2] = new Model(gl, Model.nameModel.dragon,new Vec3f(posModel.x,0.8f,posModel.z), 0.03d);
             allModels[1] = new Model(gl, Model.nameModel.bateau,new Vec3f(posModel.x,0.8f,posModel.z));
             
@@ -106,30 +101,30 @@ public class Scene
         shaders.setMaterialShininess(0,1000);
 
         shaders.setLightColor(1,MyGLRenderer.green);
-        shaders.setLightSpecular(1,new float[]{0.2f,0.5f,0.2f});
+        shaders.setLightSpecular(1,MyGLRenderer.green);
         shaders.setMaterialSpecular(1,new float[]{1f,1f,1f});
         shaders.setLightAttenuation(1,1.0f, .09f, 0.032f);
         shaders.setMaterialShininess(1,1000);
         
         shaders.setLightColor(2,MyGLRenderer.orange);
-        shaders.setLightSpecular(2,new float[]{0.2f,0.5f,0.2f});
+        shaders.setLightSpecular(2,MyGLRenderer.orange);
         shaders.setMaterialSpecular(2,new float[]{1f,1f,1f});
         shaders.setLightAttenuation(2,1.0f, .09f, 0.032f);
         shaders.setMaterialShininess(2,1000);
         
         shaders.setLightColor(3,MyGLRenderer.blue);
-        shaders.setLightSpecular(3,new float[]{0.2f,0.5f,0.2f});
+        shaders.setLightSpecular(3,MyGLRenderer.blue);
         shaders.setMaterialSpecular(3,new float[]{1f,1f,1f});
         shaders.setLightAttenuation(3,1.0f, .09f, 0.032f);
         shaders.setMaterialShininess(3,1000);
+
     }
 
     /**
      * Make the scene evoluate, to produce an animation for instance
      * Here, only the viewer rotates
      */
-    public void step()
-    {
+    public void step(){
             aux+=0.01F;
             angleRotationSphereAux+=0.01F;
     }
@@ -156,36 +151,32 @@ public class Scene
             modelviewmatrix.rotate(anglex,-0.1F,0.F,0.0F);
             modelviewmatrix.rotate(angley,0.0F,-0.1F,0.0F);  
     
-            float[] pos1 = {x-4,y,z-14,1};
-            float[] pos2 = {x-4,y,z+4,1};
-            float[] pos3 = {x,y,z,1};
-            float[] pos4 = {x,y,z,1};
+            float[] posLight1 = {x+4,y,z-4,1};
+            float[] posLight2 = {x-4,y,z+4,1};
+            float[] posLight3 = {x-4,y,z-4,1};
+            float[] posLight4 = {x+4,y,z+4,1};
 
             
-            shaders.setLightPosition(0,Outils.vec4MultMatrix4(pos1, modelviewmatrix.getMatrix()));
-            shaders.setLightPosition(1,Outils.vec4MultMatrix4(pos2, modelviewmatrix.getMatrix()));
-            shaders.setLightPosition(2,Outils.vec4MultMatrix4(pos3, modelviewmatrix.getMatrix()));
-            shaders.setLightPosition(3,Outils.vec4MultMatrix4(pos4, modelviewmatrix.getMatrix()));
-            shaders.setLighting(OnOff);
-        
-            //flashLight
-            //shaders.setLightPosition(0,Outils.vec4MultMatrix4(new float[]{0,0,0,1}, modelviewmatrix.getMatrix()));
-            //shaders.setDirectionLight(0,new float[]{0,0,-1,1});
+            shaders.setLightPosition(0,Outils.vec4MultMatrix4(posLight1, modelviewmatrix.getMatrix()));
+            shaders.setLightPosition(1,Outils.vec4MultMatrix4(posLight2, modelviewmatrix.getMatrix()));
+            shaders.setLightPosition(2,Outils.vec4MultMatrix4(posLight3, modelviewmatrix.getMatrix()));
+            shaders.setLightPosition(3,Outils.vec4MultMatrix4(posLight4, modelviewmatrix.getMatrix()));
             
+            shaders.setLighting(OnOffLight);
+            shaders.setUseFlashLight(OnOffFlash);
+
             //rotation rigolo
-//            modelviewmatrix.rotate(angleRotationSphereAux,0.0F,-0.1F,0.0F);//rotation autour d'elle même    
-//            shaders.setDirectionLight(0,Outils.vec4MultMatrix4(new float[]{0,0,-1,1}, modelviewmatrix.getMatrix()));
-//            modelviewmatrix.rotate(angleRotationSphereAux*4,0.0F,0.1F,0.0F);//rotation autour d'elle même 
-//            shaders.setDirectionLight(1,Outils.vec4MultMatrix4(new float[]{0,0,1,1}, modelviewmatrix.getMatrix()));
-//            modelviewmatrix.rotate(angleRotationSphereAux,0.0F,0.1F,0.0F);//rotation autour d'elle même    
-//            shaders.setDirectionLight(2,Outils.vec4MultMatrix4(new float[]{0,0,-1,1}, modelviewmatrix.getMatrix()));
-//            modelviewmatrix.rotate(angleRotationSphereAux*8,0.0F,-0.1F,0.0F);//rotation autour d'elle même 
-//            shaders.setDirectionLight(3,Outils.vec4MultMatrix4(new float[]{0,0,1,1}, modelviewmatrix.getMatrix()));
-            
+            modelviewmatrix.rotate(angleRotationSphereAux,0.0F,-0.1F,0.0F);//rotation autour d'elle même    
+            shaders.setDirectionLight(0,Outils.vec4MultMatrix4(new float[]{0,0,-1,1}, modelviewmatrix.getMatrix()));
+            modelviewmatrix.rotate(angleRotationSphereAux*4,0.0F,0.1F,0.0F);//rotation autour d'elle même 
+            shaders.setDirectionLight(1,Outils.vec4MultMatrix4(new float[]{0,0,1,1}, modelviewmatrix.getMatrix()));
+            modelviewmatrix.rotate(angleRotationSphereAux,0.0F,0.1F,0.0F);//rotation autour d'elle même    
+            shaders.setDirectionLight(2,Outils.vec4MultMatrix4(new float[]{0,0,-1,1}, modelviewmatrix.getMatrix()));
+            modelviewmatrix.rotate(angleRotationSphereAux*8,0.0F,-0.1F,0.0F);//rotation autour d'elle même 
+            shaders.setDirectionLight(3,Outils.vec4MultMatrix4(new float[]{0,0,1,1}, modelviewmatrix.getMatrix()));
         /*******************DrawMirroir******************/
         
             drawMirroir(renderer);
-            //drawMirroirWall(renderer);
 
         /*******************Draw******************/
         

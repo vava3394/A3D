@@ -139,7 +139,7 @@ public class MyGLRenderer implements GLEventListener
 		this.glarea = arg0;
 		try
 		{
-			shaders = new PhongShaders(this);
+			shaders = new MyLightingShaders(this);
 		}
 		catch (Exception e)
 		{
