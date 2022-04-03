@@ -1,8 +1,6 @@
 package fr.univ_poitiers.dptinfo.algo3d;
 
-import static com.jogamp.common.nio.Buffers.SIZEOF_INT;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.util.texture.Texture;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
@@ -13,9 +11,8 @@ import java.nio.ShortBuffer;
 
 /**
  *
- * @author vava3
- * 
- **/
+ * @author Portal Valentin
+ */
  
 public class VBO {
     private int glbuffer;

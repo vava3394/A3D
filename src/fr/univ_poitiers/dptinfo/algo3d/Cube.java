@@ -148,7 +148,7 @@ public class Cube implements InterfaceDraw{
         Matrix4 m = new Matrix4();
         
         Outils.setMatrixZero(m, scene.anglex, scene.angley, scene.x, scene.y, scene.z);
-        m.translate(pos.x, 0, pos.z);
+        m.translate(pos.x, pos.y, pos.z);
         
         shaders.setModelViewMatrix(m.getMatrix());
     }
@@ -158,7 +158,7 @@ public class Cube implements InterfaceDraw{
         Matrix4 m = new Matrix4();
         
         Outils.setMatrixZeroScale(m, scene.anglex, scene.angley, scene.x, scene.y, scene.z);
-        m.translate(pos.x, 0, pos.z);
+        m.translate(pos.x, pos.y, pos.z);
         
         shaders.setModelViewMatrix(m.getMatrix());
     }  

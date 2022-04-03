@@ -79,6 +79,7 @@ public class Loader{ //chargement d'un fichier .obj
                             String[] sommet1 = currentLine[2].split("/");
                             String[] sommet2 = currentLine[3].split("/");
                             String[] sommet3 = currentLine[4].split("/");
+                            String[] sommet4 = currentLine[4].split("/");
                             trianglesStockage.add(Integer.parseInt(sommet1[0])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
                             trianglesStockage.add(Integer.parseInt(sommet2[0])-1);
                             trianglesStockage.add(Integer.parseInt(sommet3[0])-1);
@@ -88,6 +89,19 @@ public class Loader{ //chargement d'un fichier .obj
                             texturePosInTriangle.add(Integer.parseInt(sommet1[1])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
                             texturePosInTriangle.add(Integer.parseInt(sommet2[1])-1);
                             texturePosInTriangle.add(Integer.parseInt(sommet3[1])-1);
+                            //parfois dans les .obj apres un f on peut avoir plus de 3 blocs d'indices
+                            if(currentLine.length>4){
+                                String[] aux = currentLine[4].split("/");
+                                trianglesStockage.add(Integer.parseInt(sommet1[0])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
+                                trianglesStockage.add(Integer.parseInt(sommet3[0])-1);
+                                trianglesStockage.add(Integer.parseInt(aux[0])-1);
+                                normalPosInTriangle.add(Integer.parseInt(sommet1[2])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
+                                normalPosInTriangle.add(Integer.parseInt(sommet3[2])-1);
+                                normalPosInTriangle.add(Integer.parseInt(aux[2])-1);
+                                texturePosInTriangle.add(Integer.parseInt(sommet1[1])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
+                                texturePosInTriangle.add(Integer.parseInt(sommet3[1])-1);
+                                texturePosInTriangle.add(Integer.parseInt(aux[1])-1);
+                            }
                         }else{
                             trianglesStockage.add(Integer.parseInt(currentLine[2])-1);
                             trianglesStockage.add(Integer.parseInt(currentLine[3])-1);
@@ -97,7 +111,7 @@ public class Loader{ //chargement d'un fichier .obj
                         if(line.contains("/")){
                             String[] sommet1 = currentLine[1].split("/");
                             String[] sommet2 = currentLine[2].split("/");
-                            String[] sommet3 = currentLine[3].split("/");
+                            String[] sommet3 = currentLine[3].split("/");                          
                             trianglesStockage.add(Integer.parseInt(sommet1[0])-1);
                             trianglesStockage.add(Integer.parseInt(sommet2[0])-1);
                             trianglesStockage.add(Integer.parseInt(sommet3[0])-1);
@@ -107,6 +121,19 @@ public class Loader{ //chargement d'un fichier .obj
                             texturePosInTriangle.add(Integer.parseInt(sommet1[1])-1);//-1 car notre tableau commence a 0 alors que dans un .obj le premier vertexpos commence a 1
                             texturePosInTriangle.add(Integer.parseInt(sommet2[1])-1);
                             texturePosInTriangle.add(Integer.parseInt(sommet3[1])-1);
+                            //parfois dans les .obj apres un f on peut avoir plus de 3 blocs d'indices
+                            if(currentLine.length>4){
+                                String[] aux = currentLine[4].split("/");
+                                trianglesStockage.add(Integer.parseInt(sommet1[0])-1);
+                                trianglesStockage.add(Integer.parseInt(sommet3[0])-1);
+                                trianglesStockage.add(Integer.parseInt(aux[0])-1);
+                                normalPosInTriangle.add(Integer.parseInt(sommet1[2])-1);
+                                normalPosInTriangle.add(Integer.parseInt(sommet3[2])-1);
+                                normalPosInTriangle.add(Integer.parseInt(aux[2])-1);
+                                texturePosInTriangle.add(Integer.parseInt(sommet1[1])-1);
+                                texturePosInTriangle.add(Integer.parseInt(sommet3[1])-1);
+                                texturePosInTriangle.add(Integer.parseInt(aux[1])-1);
+                            }
                         }else{
                             trianglesStockage.add(Integer.parseInt(currentLine[1])-1);
                             trianglesStockage.add(Integer.parseInt(currentLine[2])-1);
@@ -127,15 +154,18 @@ public class Loader{ //chargement d'un fichier .obj
                triangles[i] = trianglesStockage.get(i);
             }
             
+            //il y a trois coordonnées de normale pour chaque triangles
             double[] norm = new double[triangles.length*3];
-            for (int i = 0; i < triangles.length; i++) {
+            for (int i = 0; i < triangles.length; i++) {//pour chaque le triangle
+                //triangle[i]*3 donne le premier l'indice qui correspond à la première coordonné du vertex il faut alors que la normale soit à la même indice
                 int pos = triangles[i]*3;
-                int posN = normalPosInTriangle.get(i)*3;
-                norm[pos]=normalStockage.get(posN);
+                int posN = normalPosInTriangle.get(i)*3;//on récupère les indices des normale
+                norm[pos]=normalStockage.get(posN);//on récupère la valeur de la normale dans l'array de stockage a l'indice posN
                 norm[pos+1]=normalStockage.get(posN+1);
                 norm[pos+2]=normalStockage.get(posN+2);
             }
             
+            //identique que pour les normales sauf qu'il y que deux coordonnées
             float[] texture = new float[triangles.length*2];
             for (int i = 0; i < triangles.length; i++) {
                 int pos = triangles[i]*2;

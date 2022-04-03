@@ -9,7 +9,7 @@ import com.jogamp.opengl.math.Matrix4;
 
 /**
  *
- * @author vava3
+ * @author Portal Valentin
  */
 public class Outils {
    

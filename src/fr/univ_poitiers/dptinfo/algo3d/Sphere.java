@@ -6,6 +6,7 @@
 package fr.univ_poitiers.dptinfo.algo3d;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.math.Matrix4;
 import com.jogamp.opengl.util.texture.Texture;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 /**
  *
- * @author vava3
+ * @author Portal Valentin
  */
 public class Sphere implements InterfaceDraw{
     
@@ -353,12 +354,22 @@ public class Sphere implements InterfaceDraw{
     }
 
     @Override
-    public void setPosition(GL2 gl, LightingShaders shaders, Vec3f pos, Scene scene) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setPosition(GL2 gl, LightingShaders shaders, Vec3f pos,Scene scene) {
+        Matrix4 m = new Matrix4();
+        
+        Outils.setMatrixZero(m, scene.anglex, scene.angley, scene.x, scene.y, scene.z);
+        m.translate(pos.x, pos.y, pos.z);
+        
+        shaders.setModelViewMatrix(m.getMatrix());
     }
 
     @Override
-    public void setPositionMirroir(GL2 gl, LightingShaders shaders, Vec3f pos, Scene scene) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setPositionMirroir(GL2 gl, LightingShaders shaders, Vec3f pos,Scene scene) {
+        Matrix4 m = new Matrix4();
+        
+        Outils.setMatrixZeroScale(m, scene.anglex, scene.angley, scene.x, scene.y, scene.z);
+        m.translate(pos.x, pos.y, pos.z);
+        
+        shaders.setModelViewMatrix(m.getMatrix());
     }
 }

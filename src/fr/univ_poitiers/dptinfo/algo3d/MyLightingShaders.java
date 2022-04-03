@@ -9,7 +9,7 @@ import static fr.univ_poitiers.dptinfo.algo3d.BasicShaders.initializeShadersFrom
 
 /**
  *
- * @author vava3
+ * @author Portal Valentin
  */
 public class MyLightingShaders extends LightingShaders{
         /**

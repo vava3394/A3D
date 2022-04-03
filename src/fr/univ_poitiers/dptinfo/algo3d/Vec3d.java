@@ -1,11 +1,8 @@
 package fr.univ_poitiers.dptinfo.algo3d;
 
 /**
- * Basic class to represent 3-vectors
- * Not intended to be a complete algebra class !
- * Methods are studied to avoid allocation of new objects, this explains some weird choices...
- * @author Philippe Meseure
- * @version 1.0
+ *
+ * @author Portal Valentin
  */
 public class Vec3d
 {

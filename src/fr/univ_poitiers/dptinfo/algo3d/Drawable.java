@@ -10,7 +10,7 @@ import com.jogamp.opengl.util.texture.Texture;
 
 /**
  *
- * @author vava3
+ * @author Portal Valentin
  */
 public class Drawable {
     
@@ -43,9 +43,9 @@ public class Drawable {
         this.typeTriangle = typeTriangle;
     }
     
-    public void draw(GL2 gl,LightingShaders shaders,float[] colors,Texture texture){
+    public void draw(final GL2 gl,final LightingShaders shaders,final float[] colors,final Texture texture){
         
-        if(colors == null || colors.length <=0 || colors.length >4 ){
+        if(colors == null){
             shaders.setMaterialColor(MyGLRenderer.white);
         }else{
             shaders.setMaterialColor(colors);

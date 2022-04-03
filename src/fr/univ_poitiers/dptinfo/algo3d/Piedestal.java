@@ -27,7 +27,7 @@ public class Piedestal {
         this.scene = scene;
     }
     
-    public void draw(final GL2 gl,final LightingShaders shaders,Matrix4 modelViewMatrix,float[] color,Texture texture,Vec3f pos,float scale,InterfaceDraw obj){
+    public void draw(final GL2 gl,final LightingShaders shaders,Matrix4 modelViewMatrix,float[] color,final Texture texture,final Vec3f pos,final float scale,final InterfaceDraw obj){
         cube.setPosition(gl, shaders, pos, scene);
         cube.draw(gl, shaders, MyGLRenderer.lightgray);
         

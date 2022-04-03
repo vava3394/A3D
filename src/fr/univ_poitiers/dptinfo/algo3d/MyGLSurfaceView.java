@@ -19,6 +19,10 @@ import com.jogamp.opengl.util.FPSAnimator;
  * Class to described the surface view
  * @author Hakim Belhaouari and Philippe Meseure
  */
+/**
+ *
+ * modifier par Portal Valentin
+ */
 public class MyGLSurfaceView extends JPanel
 	implements KeyListener,MouseListener, MouseMotionListener
 {	

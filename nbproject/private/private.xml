@@ -4,9 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/Scene.java</file>
+            <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/LambertShaders.java</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/Cube.java</file>
+            <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/res/myShaders_frag.glsl</file>
+            <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/NoLightShaders.java</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/Vec3f.java</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/MyGLRenderer.java</file>
+            <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/BasicShaders.java</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/res/phong_vert.glsl</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/Piedestal.java</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/MyGLSurfaceView.java</file>
@@ -24,10 +28,12 @@
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/Vec3d.java</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/PhongShaders.java</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/res/myShaders_vert.glsl</file>
+            <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/res/gouraud_vert.glsl</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/res/phong_frag.glsl</file>
-            <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/model/bunny.obj</file>
+            <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/res/lambert_frag.glsl</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/VBO.java</file>
             <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/InterfaceDraw.java</file>
+            <file>file:/C:/Users/vava3/Documents/project/A3D/TP3/TP1-Room3D/A3D/src/fr/univ_poitiers/dptinfo/algo3d/Room.java</file>
         </group>
     </open-files>
 </project-private>

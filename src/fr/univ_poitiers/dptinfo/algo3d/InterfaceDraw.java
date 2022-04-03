@@ -10,7 +10,7 @@ import com.jogamp.opengl.util.texture.Texture;
 
 /**
  *
- * @author vava3
+ * @author Portal Valentin
  */
 public interface InterfaceDraw {
     

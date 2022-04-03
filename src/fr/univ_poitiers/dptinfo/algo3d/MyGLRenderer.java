@@ -15,6 +15,10 @@ import java.io.InputStream;
  * It is a kind of bridge toward OpenGL
  * @author Hakim Belhaouari & Philippe Meseure
  */
+/**
+ *
+ * modifier par Portal Valentin
+ */
 public class MyGLRenderer implements GLEventListener
 {	
 	static public final float[] black={0.F,0.F,0.F,1.F};

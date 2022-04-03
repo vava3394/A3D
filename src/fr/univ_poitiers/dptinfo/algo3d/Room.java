@@ -10,7 +10,7 @@ import com.jogamp.opengl.util.texture.Texture;
 
 /**
  *
- * @author vava3
+ * @author Portal Valentin
  */
 public class Room {
         
@@ -77,17 +77,25 @@ public class Room {
             -lenght,wallsize-scaleHeightDoor,-lenght,//22
             -lenght+scaleWidthDoor,wallsize-scaleHeightDoor,-lenght,//23
             
+            -lenght,wallsize-scaleHeightDoor,-lenght,//24
+            -lenght+scaleWidthDoor,wallsize-scaleHeightDoor,-lenght,//25
+            -lenght,wallsize,-lenght,//26
+            -lenght+scaleWidthDoor,wallsize,-lenght,//27          
             
-            lenght-scaleWidthDoor,0,-lenght,//24
-            lenght,0,-lenght,//25
-            lenght-scaleWidthDoor,wallsize-scaleHeightDoor,-lenght,//26
-            lenght,wallsize-scaleHeightDoor,-lenght,//27
+            lenght-scaleWidthDoor,0,-lenght,//28
+            lenght,0,-lenght,//29
+            lenght-scaleWidthDoor,wallsize-scaleHeightDoor,-lenght,//30
+            lenght,wallsize-scaleHeightDoor,-lenght,//31
             
-            
-            -lenght,wallsize-scaleHeightDoor,-lenght,//28
-            lenght,wallsize-scaleHeightDoor,-lenght,//29
-            -lenght,wallsize,-lenght,//30
-            lenght,wallsize,-lenght//31 wall back
+            lenght-scaleWidthDoor,wallsize-scaleHeightDoor,-lenght,//32
+            lenght,wallsize-scaleHeightDoor,-lenght,//33
+            lenght-scaleWidthDoor,wallsize,-lenght,//34
+            lenght,wallsize,-lenght,//35
+
+            -lenght+scaleWidthDoor,wallsize-scaleHeightDoor,-lenght,//36
+            lenght-scaleWidthDoor,wallsize-scaleHeightDoor,-lenght,//37
+            -lenght+scaleWidthDoor,wallsize,-lenght,//38
+            lenght-scaleWidthDoor,wallsize,-lenght,//39 wall back
             
         };
         
@@ -121,7 +129,11 @@ public class Room {
             24,25,26,
             26,25,27,
             28,29,30,
-            30,29,31//mur de face avec porte
+            30,29,31,
+            32,33,34,
+            34,33,35,          
+            36,37,38,
+            38,37,39//mur de face avec porte
         };
         
         this.glelementtriWallsbuffer.allocateBuffer(trianglesWalls, trianglesWalls.length);
@@ -166,6 +178,16 @@ public class Room {
             0, 0, 1,
             0, 0, 1,
             0, 0, 1,
+            
+            0, 0, 1, // Front
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            
+            0, 0, 1, // Front
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
         };
         
         this.glelementNormal.allocateBuffer(norm, norm.length);
@@ -181,10 +203,12 @@ public class Room {
             0,1,
             1,1,
             
-            0,0,
+            
             1,0,
-            0,1,
+            0,0,
+            
             1,1,
+            0,1,
 
             0,0,
             1,0,
@@ -209,7 +233,17 @@ public class Room {
             0,0,
             1,0,
             0,1,
-            1,1    
+            1,1,
+            
+            0,0,
+            1,0,
+            0,1,
+            1,1,
+            
+            0,0,
+            1,0,
+            0,1,
+            1,1   
         };
   
         this.gltexturebuffer.allocateBuffer(texture, texture.length);
@@ -236,13 +270,6 @@ public class Room {
         );
         
     }
-    
-    /*private static float[] createNormal(float[] a,float[]b,float[]c){
-        float [] u = {b[0] - a[0], b[1] - a[1],b[2] - a[2]};
-        float [] v = {c[0] - a[0], c[1] - a[1],c[2] - a[2]};
-        
-        return new float[]{( u[1] * v[2] - u[2] * v[1]),( u[2] * v[0] - u[0] * v[2]),( u[0] * v[1] - u[1] * v[0])};
-    }*/
    
     public void draw (GL2 gl, LightingShaders shaders, float[] colorFloor, float[] colorCelling, float[] colorWall, boolean isMirroirFloor){
         if(isMirroirFloor){
@@ -261,7 +288,7 @@ public class Room {
         if(isMirroirFloor){
             gl.glEnable(GL2.GL_BLEND);
             gl.glBlendFunc(GL2.GL_SRC_ALPHA,GL2.GL_ONE_MINUS_SRC_ALPHA);
-            colorFloor[3] = 0.5f;
+            colorFloor[3] = 0.7f;
         } 
         this.drawableFloor.draw(gl, shaders, colorFloor,textureFloor);
         gl.glDisable(GL2.GL_BLEND);

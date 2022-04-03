@@ -9,6 +9,11 @@ import com.jogamp.opengl.util.texture.Texture;
  * @author Philippe Meseure
  * @version 1.0
  */
+
+/**
+ *
+ * modifier par Portal Valentin
+ */
 public class Scene
 {
     /**
@@ -31,18 +36,19 @@ public class Scene
 
     Room r;
     
-    Sphere s;
+    Sphere s1,s2,s3,s4,s5,s6; //sphere decoupage step1 tp3
+    Sphere sD1,sD2,sD3,sD4,sD5,sD6; //sphere en subdivision step2 tp3
     
-    Model arach,waterMelon,bunny;
+    Model arach,bunny,mistery;
     
     Model[] allModels = new Model[5];
-    Texture[] textureModels = new Texture[6];
+    Texture[] textureModels = new Texture[5];
     
     Piedestal piedestal;
     
     LightingShaders shaders;
     
-    Texture Texwall,texfloorM,texfloor,texcelling,texball,texArach,texWaterMelon,texBunny;
+    Texture texwall1,texwall2,texfloorM,texfloor,texcelling,texball,texArach,texBunny,texEva;
     
     
     /**
@@ -60,37 +66,48 @@ public class Scene
             gl.glDepthFunc(GL2.GL_LESS);
             gl.glEnable(GL2.GL_DEPTH_TEST);
             
-            Texwall = renderer.loadTexture(gl, "wall.jpg");
+            texwall1 = renderer.loadTexture(gl, "wall.jpg");
+            texwall2 = renderer.loadTexture(gl, "wall2.jpg");
             texball = renderer.loadTexture(gl, "beachball.jpg");
             texfloor = renderer.loadTexture(gl, "tiles1.jpg");
             texfloorM = renderer.loadTexture(gl, "tiles2.jpg");
             texcelling = renderer.loadTexture(gl, "ceiling.jpg");
             texArach = renderer.loadTexture(gl, "D_2.jpg");
-            texWaterMelon = renderer.loadTexture(gl, "WatermelonAlbedo.jpg");
             texBunny = renderer.loadTexture(gl, "bunny.jpg");
+            texEva = renderer.loadTexture(gl, "eva3.jpg");
             
             //room
             r = new Room(gl,lenght,wallsize);
             
             //sphere
-            s = new Sphere(gl,5);
-
+            s1= new Sphere(gl,10,10,1);//sphere par découpage en longitude, latitude
+            s2= new Sphere(gl,50,50,1);//sphere par découpage en longitude, latitude
+            s3= new Sphere(gl,100,100,1);//sphere par découpage en longitude, latitude
+            s4= new Sphere(gl,200,200,1);//sphere par découpage en longitude, latitude
+            s5= new Sphere(gl,10,200,1);//sphere par découpage en longitude, latitude
+            
+            sD1= new Sphere(gl,0);//sphere nombre de subdivision
+            sD2= new Sphere(gl,1);//sphere nombre de subdivision
+            sD3= new Sphere(gl,2);//sphere nombre de subdivision
+            sD4= new Sphere(gl,3);//sphere nombre de subdivision
+            sD5= new Sphere(gl,4);//sphere nombre de subdivision
+            
             //Model
-            arach = new Model(gl, Model.nameModel.arach,new Vec3f(posModel.x,0,posModel.z),10);
-            waterMelon = new Model(gl, Model.nameModel.Watermelon,new Vec3f(posModel.x,0,posModel.z),10);
+            arach = new Model(gl, Model.nameModel.arach,new Vec3f(posModel.x,0,posModel.z),10);    
             bunny = new Model(gl, Model.nameModel.bunny,new Vec3f(posModel.x,0,posModel.z),1);
-            allModels[0] = waterMelon;
+            mistery = new Model(gl, Model.nameModel.mistery, new Vec3f(posModel.x,0,posModel.z),0.85d);
+            
+            allModels[0] = new Model(gl,Model.nameModel.eva3,new Vec3f(posModel.x,0,posModel.z),100d);//gl,nom du model,position,scale(si le model est trop grand ou trop petit)
             allModels[1] = new Model(gl,Model.nameModel.Lara_Croft,new Vec3f(posModel.x,0,posModel.z),1.5d);//gl,nom du model,position,scale(si le model est trop grand ou trop petit)
-            allModels[2] = new Model(gl,Model.nameModel.DoomguyDeathHead,new Vec3f(posModel.x,0,posModel.z),500f);
-            allModels[3] = new Model(gl, Model.nameModel.dragon,new Vec3f(posModel.x,0,posModel.z), 0.03d);
+            allModels[2] = new Model(gl,Model.nameModel.bateau,new Vec3f(posModel.x,0,posModel.z),1f);
+            allModels[3] = new Model(gl,Model.nameModel.DoomguyDeathHead,new Vec3f(posModel.x,0,posModel.z),500f);
             allModels[4] = arach;
             
-            
-            textureModels[4] = texArach;
-            textureModels[2] = renderer.loadTexture(gl, "doomhelmet.jpg");;
-            textureModels[3] =null;
-            textureModels[1] =null;
-            textureModels[0] =texWaterMelon;
+            textureModels[0]=texEva;
+            textureModels[1]=null;
+            textureModels[2]=null;
+            textureModels[3]=renderer.loadTexture(gl, "doomhelmet.jpg");
+            textureModels[4]=texArach;
             
             
             //piedestal
@@ -101,7 +118,7 @@ public class Scene
             shaders.setAmbiantLight(new float[]{.2f,.2f,.2f});
             shaders.setViewPos(new float[]{0,0,0});
             
-            creationShader(shaders);
+            creationLights(shaders);
             
             MainActivity.log("Initializing graphics");
             // Set the background frame color
@@ -112,7 +129,7 @@ public class Scene
     }
 
     
-    private void creationShader(LightingShaders shaders){
+    private void creationLights(LightingShaders shaders){
         shaders.setLightColor(0,MyGLRenderer.white);
         shaders.setLightSpecular(0,new float[]{0.5f,0.5f,0.5f});
         shaders.setMaterialSpecular(0,new float[]{1f,1f,1f});
@@ -199,13 +216,13 @@ public class Scene
             /***************Room***************/
             Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
             shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-            r.draw(gl, shaders, texfloorM, texcelling, Texwall,true); 
+            r.draw(gl, shaders, texfloorM, texcelling, texwall2,true); 
             
             Outils.setMatrixZero(modelviewmatrix, anglex, angley, x, y, z);
             modelviewmatrix.translate(0f,0,-(lenght*ecart));
             modelviewmatrix.rotate((float) Math.PI,0F,0.1F,0.0F);
             shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-            r.draw(gl, shaders, texfloor, texcelling, Texwall,false);
+            r.draw(gl, shaders, texfloor, texcelling, texwall1,false);
             
             /***************Model***************/
             allModels[indexModel].setIsRotate(true);
@@ -222,19 +239,23 @@ public class Scene
             shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
             bunny.draw(gl, shaders, texBunny);
             
+            mistery.setIsRotate(false);
+            mistery.setPosition(gl, shaders, new Vec3f(0, 0, -21f), this);
+            mistery.draw(gl, shaders, MyGLRenderer.lightgray);
+            
             /***************Piedestal***************/
 
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,texball,new Vec3f(3,0,-4),0.5f,s);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(3,0,-2),0.5f,s);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(3,0,0),0.5f,s);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(3,0,2),0.5f,s);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(3,0,4),0.5f,s);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(3,0,-4),0.5f,s1);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(3,0,-2),0.5f,s2);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,texball,new Vec3f(3,0,0),0.5f,s3);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,texball,new Vec3f(3,0,2),0.5f,s4);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.white,texball,new Vec3f(3,0,4),0.5f,s5);
 
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,-4),0.5f,s);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(-3,0,-2),0.5f,s);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,0),0.5f,s);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(-3,0,2),0.5f,s);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,4),0.5f,s);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,-4),0.5f,sD1);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(-3,0,-2),0.5f,sD2);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,texball,new Vec3f(-3,0,0),0.5f,sD3);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,texball,new Vec3f(-3,0,2),0.5f,sD4);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.white,texball,new Vec3f(-3,0,4),0.5f,sD5);
 
             MainActivity.log("Rendering terminated.");
     }
@@ -247,13 +268,13 @@ public class Scene
 
         Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
         shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-        r.drawMirroir(gl, shaders, texcelling, Texwall);
+        r.drawMirroir(gl, shaders, texcelling, texwall1);
         
         Outils.setMatrixZeroScale(modelviewmatrix, anglex, angley, x, y, z);
         modelviewmatrix.translate(0f,0,-(lenght*ecart));
         modelviewmatrix.rotate((float) Math.PI,0F,0.1F,0.0F);
         shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
-        r.drawMirroir(gl, shaders, texcelling, Texwall);
+        r.drawMirroir(gl, shaders, texcelling, texwall2);
         
         allModels[indexModel].setIsRotate(true);
         allModels[indexModel].setPositionMirroir(gl, shaders, null, this);
@@ -269,17 +290,17 @@ public class Scene
         shaders.setModelViewMatrix(modelviewmatrix.getMatrix());
         bunny.draw(gl, shaders, texBunny);
 
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix,MyGLRenderer.randColor,texball,new Vec3f(3,0,-4),0.5f,s);
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(3,0,-2),0.5f,s);
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(3,0,0),0.5f,s);
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(3,0,2),0.5f,s);
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(3,0,4),0.5f,s);
-        
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,-4),0.5f,s);
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(-3,0,-2),0.5f,s);
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,0),0.5f,s);
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(-3,0,2),0.5f,s);
-        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,4),0.5f,s);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(3,0,-4),0.5f,s1);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(3,0,-2),0.5f,s2);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,texball,new Vec3f(3,0,0),0.5f,s3);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,texball,new Vec3f(3,0,2),0.5f,s4);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.white,texball,new Vec3f(3,0,4),0.5f,s5);
+
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,-4),0.5f,sD1);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(-3,0,-2),0.5f,sD2);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,texball,new Vec3f(-3,0,0),0.5f,sD3);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,texball,new Vec3f(-3,0,2),0.5f,sD4);
+        piedestal.drawMirroir(gl, shaders,modelviewmatrix, MyGLRenderer.white,texball,new Vec3f(-3,0,4),0.5f,sD5);
         
         gl.glFrontFace(GL2.GL_CCW);
     }

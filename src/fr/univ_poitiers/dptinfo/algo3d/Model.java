@@ -12,7 +12,7 @@ import com.jogamp.opengl.util.texture.Texture;
 
 public class Model extends Loader implements InterfaceDraw{
 
-    public static enum nameModel {Lara_Croft,DoomguyDeathHead,Doom,dragon,arach,Watermelon,bunny};//enum de tous les noms de fichiers .obj du projet 
+    public static enum nameModel {Lara_Croft,DoomguyDeathHead,arach,bunny,mistery,eva3,bateau};//enum de tous les noms de fichiers .obj du projet 
 
     private boolean isRotate = true;
     private Vec3f pos;

@@ -7,7 +7,7 @@ package fr.univ_poitiers.dptinfo.algo3d;
 
 /**
  *
- * @author vava3
+ * @author Portal Valentin
  */
 public class PhongShaders extends LightingShaders{
         /**
