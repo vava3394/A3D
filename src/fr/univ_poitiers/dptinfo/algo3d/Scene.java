@@ -253,7 +253,7 @@ public class Scene
 
             piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,-4),0.5f,sD1);
             piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,null,new Vec3f(-3,0,-2),0.5f,sD2);
-            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,texball,new Vec3f(-3,0,0),0.5f,sD3);
+            piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.randColor,null,new Vec3f(-3,0,0),0.5f,sD3);
             piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.magenta,texball,new Vec3f(-3,0,2),0.5f,sD4);
             piedestal.draw(gl, shaders,modelviewmatrix, MyGLRenderer.white,texball,new Vec3f(-3,0,4),0.5f,sD5);
 
