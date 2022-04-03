@@ -1,13 +1,14 @@
 package fr.univ_poitiers.dptinfo.algo3d;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.math.Matrix4;
 import com.jogamp.opengl.util.texture.Texture;
 
 /**
  *
  * @author Portal Valentin
  */
-public class Cube{
+public class Cube implements InterfaceDraw{
     
     private VBO glposbuffer;
     private VBO glelementtribuffer;
@@ -127,16 +128,38 @@ public class Cube{
         drawable =new Drawable(glnormalebuffer, gltexturebuffer, glposbuffer, glelementtribuffer);
     }
     
+    @Override
     public void draw(final GL2 gl,final LightingShaders shaders,float[] color){
         this.drawable.draw(gl, shaders, color, null);
     }
     
+    @Override
     public void draw(final GL2 gl,final LightingShaders shaders,Texture texture,float [] color){
         this.drawable.draw(gl, shaders, color, texture);
     }
     
+    @Override
     public void draw(final GL2 gl,final LightingShaders shaders,Texture texture){
         this.drawable.draw(gl, shaders, null, texture);
     }
-    
+
+    @Override
+    public void setPosition(GL2 gl, LightingShaders shaders, Vec3f pos,Scene scene) {
+        Matrix4 m = new Matrix4();
+        
+        Outils.setMatrixZero(m, scene.anglex, scene.angley, scene.x, scene.y, scene.z);
+        m.translate(pos.x, 0, pos.z);
+        
+        shaders.setModelViewMatrix(m.getMatrix());
+    }
+
+    @Override
+    public void setPositionMirroir(GL2 gl, LightingShaders shaders, Vec3f pos,Scene scene) {
+        Matrix4 m = new Matrix4();
+        
+        Outils.setMatrixZeroScale(m, scene.anglex, scene.angley, scene.x, scene.y, scene.z);
+        m.translate(pos.x, 0, pos.z);
+        
+        shaders.setModelViewMatrix(m.getMatrix());
+    }  
 }

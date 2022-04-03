@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author vava3
  */
-public class Sphere{
+public class Sphere implements InterfaceDraw{
     
     private Map<FloatBuffer,Short> auxilliaireSub;
     
@@ -79,12 +79,17 @@ public class Sphere{
         }
         
         
-        texture = new float[(int) (2*(vertexpos.length/3))];
-        int texCursor = 0;
-        for (int i = 0; i < vertexpos.length; i+= 3) {
-            texture[texCursor] = Math.abs(vertexpos[i+2]+1)/2;
-            texture[texCursor+1] = Math.abs(vertexpos[i+1]+1)/2;
-            texCursor += 2;
+        texture = new float[(vertexpos.length/3)*2];
+        for (int i = 0, n = -1; i < vertexpos.length; i += 3) {
+            x = vertexpos[i];
+            y = vertexpos[i + 1];
+            z = vertexpos[i + 2];
+
+            double theta = (float) Math.asin(z);
+            double phi = (float) Math.atan2(y, x);
+
+            texture[++n] = 0.5f +(float) (phi / (2 * Math.PI));
+            texture[++n] = 0.5f +(float) (theta / Math.PI);
         }
         
         offset = 0;
@@ -200,8 +205,8 @@ public class Sphere{
             double theta = (float) Math.asin(z);
             double phi = (float) Math.atan2(y, x);
 
-            texture[++n] = (float) Math.abs(phi / (2 * Math.PI));
-            texture[++n] = (float) Math.abs(theta / Math.PI + 0.5);
+            texture[++n] = 0.5f +(float) (phi / (2 * Math.PI));
+            texture[++n] = 0.5f +(float) (theta / Math.PI);
         }
         /*int texCursor = 0;
         for (int i = 0; i < vertexpos.length; i+= 3) {
@@ -331,15 +336,29 @@ public class Sphere{
         }
     }
        
+    @Override
     public void draw(final GL2 gl,final LightingShaders shaders,float[] color){
         this.drawable.draw(gl, shaders, color, null);
     }
     
+    @Override
     public void draw(final GL2 gl,final LightingShaders shaders,Texture texture,float [] color){
         this.drawable.draw(gl, shaders, color, texture);
     }
     
+
+    @Override
     public void draw(final GL2 gl,final LightingShaders shaders,Texture texture){
         this.drawable.draw(gl, shaders, null, texture);
+    }
+
+    @Override
+    public void setPosition(GL2 gl, LightingShaders shaders, Vec3f pos, Scene scene) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setPositionMirroir(GL2 gl, LightingShaders shaders, Vec3f pos, Scene scene) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
